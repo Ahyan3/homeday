@@ -1,0 +1,6 @@
+# Copy to .dev.vars for `npm run dev` (Cloudflare's local runner). Never commit .dev.vars.
+HOMEDAY_DB_SECRET=
+PAYMONGO_SECRET_KEY=sk_test_
+PAYMONGO_WEBHOOK_SECRET=
+# PRINTS_ENABLED=1
+# SITE_URL=https://homeday.pages.dev
