@@ -1,6 +1,6 @@
 # Database
 
-Supabase Postgres holds four tables and a photo bucket. The browser never touches the tables: every table has row level security on, no policies, and no grants for `anon` or `authenticated`. Instead, the browser and the server call a small set of `SECURITY DEFINER` functions, each with `search_path = ''`.
+Supabase Postgres holds six tables and a photo bucket. The browser never touches the tables: every table has row level security on, no policies, and no grants for `anon` or `authenticated`. Instead, the browser and the server call a small set of `SECURITY DEFINER` functions, each with `search_path = ''`.
 
 ## Tables
 
@@ -10,7 +10,8 @@ Supabase Postgres holds four tables and a photo bucket. The browser never touche
 | `guestbook` | Messages on a timeline; `hidden` when the owner removes one |
 | `orders` | One row per checkout: `pending` → `paid` (or `underpaid`) |
 | `number_ones` | Billboard Hot 100 number one for every chart week since 1958 |
-| `app_secrets` | The server-to-database secret (`webhook`) |
+| `reminders` | Emails that get a homeday reminder, with an unsubscribe token and the last year one was sent |
+| `app_secrets` | The server-to-database secret (`webhook`), the site address, and the email settings |
 
 Storage bucket `photos` is public for reading by URL. Anyone may upload JPEG, PNG or WebP files up to 4 MB under `u/<random>/<random>.<ext>`; nobody can list or overwrite files.
 
@@ -27,7 +28,9 @@ Storage bucket `photos` is public for reading by URL. Anyone may upload JPEG, PN
 | `song_on(date)` | Browser | The number one in the chart week containing that date |
 | `create_order(secret, p)` | Server | Records a pending order with its expected amount |
 | `mark_order_paid(secret, p)` | Server | Marks an order paid, only if the amount covers the expected price. Repeat calls are harmless |
-| `record_order(secret, p)` | Unused | Left from the first, Stripe-based version |
+| `add_reminder(id, key, email)` | Browser | Turns on yearly reminders for a living pet, if the edit key matches. Up to 5 emails per timeline |
+| `reminder_emails(id, key)` | Browser | Lists a timeline's reminder emails, for the owner only |
+| `unsubscribe_reminder(token)` | Browser | Stops reminders from the link in an email |
 
 The functions that take `secret` refuse to run unless it matches `app_secrets.webhook`. That value lives only in the database and in the host's `HOMEDAY_DB_SECRET`.
 
@@ -40,5 +43,14 @@ Run in order from `supabase/migrations/`:
 1. `20261120125633_homeday_core.sql`: tables, browser functions, photo bucket
 2. `20261120130542_number_ones.sql`: song table and `song_on`
 3. `20261120140017_paymongo_orders.sql`: pending orders and the amount check
+4. `20261120182151_homeday_reminders.sql`: reminder emails and the daily job that sends them
+5. `20261120182245_reminder_plain_subjects.sql`: plain-text email subjects
+6. `20261120182334_drop_stripe_record_order.sql`: removes the unused Stripe function
 
 Then load the songs with `supabase/seed/number_ones.sql`.
+
+## Reminder emails
+
+Every day at 9 am Philippine time, the `homeday-reminders` job (pg_cron) runs `send_due_reminders()`. It finds pets whose homeday is one to seven days away, skips memorials and anyone already emailed this year, and sends up to 90 emails through Resend with pg_net, which keeps it inside Resend's free limit of 100 a day. Pets who came home on 29 February get their reminder for 1 March in other years. Every email has a one-click unsubscribe link and header.
+
+Nothing is sent until `resend_api_key` and `reminder_from` are set in `app_secrets`. See [operations](operations.md#switch-on-reminder-emails).

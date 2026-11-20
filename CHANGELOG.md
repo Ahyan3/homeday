@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.1.0: 21 November 2026
+
+### Added
+- Homeday reminders: timeline owners can get one email a year, a week before the homeday. Never sent for memorials. Sent daily from the database through Resend, with one-click unsubscribe. Switched off until a Resend key is set.
+- Unsubscribe page.
+
+### Fixed
+- The share image was missing from the Vercel deployment, so shared links showed no picture.
+
+### Removed
+- The unused Stripe order function.
+
 ## 1.0.0: 21 November 2026
 
 First full version, ready for the 5 December launch.

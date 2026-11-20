@@ -62,6 +62,11 @@
           <div class="copyline"><input type="text" id="edit-url" readonly><button type="button" class="btn quiet" data-copy="edit-url">Copy link</button></div>
           <p class="small">Anyone with this link can change the timeline, so keep it to yourself. This browser remembers it too.</p>
         </div>
+        <form class="share-row remind" id="remind-form" novalidate hidden>
+          <label for="remind-email">Email me a week before each homeday</label>
+          <div class="copyline"><input type="email" id="remind-email" autocomplete="email" inputmode="email" placeholder="you@example.com" maxlength="254"><button class="btn quiet" type="submit" id="remind-btn">Remind me</button></div>
+          <p class="small" id="remind-note" role="status">One email a year. Every email has a link to stop them.</p>
+        </form>
       </div>
     </div>
 
@@ -251,5 +256,6 @@
 
 <script src="/assets/core.js"></script>
 <script src="/assets/app.js"></script>
+<script src="/assets/remind.js"></script>
 </body>
 </html>

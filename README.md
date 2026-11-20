@@ -14,6 +14,7 @@ Live: [homeday-eight.vercel.app](https://homeday-eight.vercel.app) · Moving to 
 - **Photos and guestbook.** Up to 12 photos, resized in the browser before upload. Friends can leave messages; the owner can hide them.
 - **Memorial mode.** A quieter timeline that ends on the day you said goodbye, with no upsell.
 - **Keepsakes.** A printable poster and certificate, unlocked after payment. Prints and books are built but switched off at launch.
+- **Homeday reminders.** Owners can ask for one email a year, a week before each homeday, with a link back to the timeline and the keepsake. Never for memorials. Sent from the database, so it works on any host.
 - **Share previews.** On Cloudflare, shared links show the pet's name, and timelines are kept out of search engines.
 
 ## How it works
@@ -29,6 +30,7 @@ flowchart LR
   H -->|checkout session| P[PayMongo]
   P -->|checkout_session.payment.paid| W[/api/paymongo-webhook/]
   W -->|mark_order_paid| S
+  S -->|daily reminders: pg_cron + pg_net| R[Resend]
 ```
 
 - The browser talks to Supabase only through a handful of `SECURITY DEFINER` functions. The tables themselves are closed to the public. See [database](docs/database.md).
@@ -41,6 +43,8 @@ flowchart LR
 public/               Website: pages, styles, browser scripts, share image
   assets/core.js      Dates, moon, timeline drawing, database calls
   assets/app.js       Page logic: form, saving, sharing, guestbook, checkout
+  assets/remind.js    Reminder sign-up for timeline owners
+  unsubscribe.html    Stops reminder emails
 lib/                  Server code shared by both hosts
   checkout.js         Creates PayMongo checkout sessions
   webhook.js          Verifies and records payments
@@ -77,6 +81,8 @@ For checkout to work locally, copy `.dev.vars.example` to `.dev.vars` and fill i
 | `PRINTS_ENABLED` | No | `1` to sell prints and books (also un-hide their rows in `public/index.html`) |
 | `PAYMONGO_METHODS` | No | Comma-separated payment methods, if you want to override what your account allows |
 | `SITE_URL` | No | Your own domain, used for PayMongo's return links |
+
+Reminder email settings (`resend_api_key`, `reminder_from`, `site_url`) live in the database's `app_secrets` table, not on the host. See [operations](docs/operations.md#switch-on-reminder-emails).
 
 Prices live in `lib/shared.js` (in centavos) and in `public/index.html` (what the page shows). Keep them the same.
 

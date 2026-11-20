@@ -66,3 +66,32 @@ Edit both, then deploy:
 ## Change the owner details
 
 Name and contact email are in `public/terms.html`, under "Who runs Homeday".
+
+## Switch on reminder emails
+
+Sign-ups already work; emails go out once these are set. You need your own domain first, because Resend only sends to other people from a verified domain.
+
+1. Create a free account at [resend.com](https://resend.com) (100 emails a day, 3,000 a month).
+2. In Resend, add your domain and put the DNS records it shows into your domain's DNS. Wait until it says **Verified**.
+3. Create an API key with **Sending access** only.
+4. In Supabase, open **SQL Editor** and run, with your own values:
+
+```sql
+insert into public.app_secrets (name, value) values
+  ('resend_api_key', 're_your_key_here'),
+  ('reminder_from', 'Homeday <hello@yourdomain.com>')
+on conflict (name) do update set value = excluded.value;
+```
+
+5. Check tomorrow's queue with `select * from public.due_reminders();`, and after 9 am see what was sent in Resend's **Emails** page.
+
+To pause emails, run `delete from public.app_secrets where name = 'resend_api_key';`.
+
+## Change the site address
+
+When the site moves (to Cloudflare, or to your own domain), update the address used in email links:
+
+```sql
+update public.app_secrets set value = 'https://yourdomain.com' where name = 'site_url';
+```
+
