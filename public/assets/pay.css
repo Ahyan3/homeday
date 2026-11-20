@@ -1,0 +1,10 @@
+/* shipping form for prints and books */
+.shipform { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; background: var(--paper); border: 1.5px solid var(--ink); border-radius: 14px; padding: 22px; }
+.shipform .wide { grid-column: 1 / -1; }
+.shipform h3:focus { outline: none; }
+input[type=tel] {
+  font: inherit; font-family: var(--display); font-size: 1.05rem; color: var(--ink);
+  background: #fff; border: 1.5px solid var(--moss); border-radius: 8px; padding: 10px 12px; width: 100%; min-height: 46px;
+}
+.price button:disabled { opacity: .55; cursor: progress; }
+@media (max-width: 820px) { .shipform { grid-template-columns: 1fr; } }

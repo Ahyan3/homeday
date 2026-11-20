@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Thank you · Homeday</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+<header class="wrap top"><a class="mark" href="/">Homeday</a></header>
+<div class="collar" aria-hidden="true"><div class="holes"><i></i><i></i><i></i><i></i></div></div>
+<main class="wrap stack thanks">
+  <h1>Thank you. Your order is in.</h1>
+  <p id="t-lead">PayMongo sends your receipt by email.</p>
+  <ul>
+    <li>A <b>digital keepsake</b> unlocks within a minute. Open it from the button below.</li>
+    <li>A <b>framed print</b> or <b>memory book</b> is made to order. We'll email you when it's on its way.</li>
+  </ul>
+  <div class="actions" id="t-actions">
+    <a class="btn" href="/">Go to Homeday</a>
+  </div>
+</main>
+<script src="/assets/core.js"></script>
+<script>
+(function () {
+  var H = window.Homeday, id = new URLSearchParams(location.search).get("t") || H.store.get("homeday:last");
+  if (!id || !/^[a-z0-9]{6,12}$/.test(id)) return;
+  H.$("t-actions").innerHTML = '<a class="btn" href="/keepsake/' + id + '?paid=1">Open the keepsake</a> <a class="btn quiet" href="/t/' + id + '">Back to the timeline</a>';
+})();
+</script>
+</body>
+</html>

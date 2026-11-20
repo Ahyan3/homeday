@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Homeday: your pet's life with you, day by day</title>
+<meta name="description" content="Tell us the day your pet came home. Homeday lays out your whole life together: the weather and the moon that day, the song at number one, and every milestone since. Free.">
+<meta property="og:title" content="Homeday: your pet's life with you, day by day">
+<meta property="og:description" content="The weather, the moon and the number one song on the day they came home, and every milestone since. Free, no account.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#14302A">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='17' r='13' fill='%23B08D4F'/%3E%3Ccircle cx='16' cy='7' r='2.5' fill='%23E7ECE3'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<link rel="stylesheet" href="/assets/pay.css">
+</head>
+<body class="mode-make">
+
+<header class="wrap top">
+  <a class="mark" href="/">Homeday</a>
+  <nav aria-label="Sections">
+    <a class="only-make" href="#timeline">Example</a>
+    <a class="only-make" href="#memorial">Memorials</a>
+    <a href="#keepsakes">Keepsakes</a>
+    <a class="only-view" href="/">Make your own</a>
+  </nav>
+</header>
+<div class="collar" aria-hidden="true"><div class="holes"><i></i><i></i><i></i><i></i></div></div>
+
+<main>
+<div class="wrap hero">
+  <div class="pitch">
+    <div class="only-make pitch-copy">
+      <h1 id="hero-title">Every day since they came home.</h1>
+      <p class="lead">Tell us the day your pet came home. Homeday lays out your whole life together: the weather and the moon that day, the song at number one, and every milestone since.</p>
+    </div>
+    <div class="only-view pitch-copy">
+      <h1 id="view-title"></h1>
+      <p class="lead" id="view-lead"></p>
+      <div class="owner-bar" id="owner-bar" hidden>
+        <a class="btn quiet" id="edit-link" href="/">Edit timeline</a>
+        <button class="btn" type="button" id="open-share">Share</button>
+      </div>
+      <div class="share" id="share" hidden>
+        <div class="share-row">
+          <label for="share-url">Link for friends and family</label>
+          <div class="copyline"><input type="text" id="share-url" readonly><button type="button" class="btn quiet" data-copy="share-url">Copy link</button></div>
+          <p class="small sharevia">Send it on
+            <a id="sh-wa" href="#" target="_blank" rel="noopener">WhatsApp</a>,
+            <a id="sh-fb" href="#" target="_blank" rel="noopener">Facebook</a>,
+            <a id="sh-x" href="#" target="_blank" rel="noopener">X</a> or
+            <a id="sh-mail" href="#">email</a>.</p>
+        </div>
+        <div class="share-row">
+          <label for="edit-url">Your private edit link</label>
+          <div class="copyline"><input type="text" id="edit-url" readonly><button type="button" class="btn quiet" data-copy="edit-url">Copy link</button></div>
+          <p class="small">Anyone with this link can change the timeline, so keep it to yourself. This browser remembers it too.</p>
+        </div>
+      </div>
+    </div>
+
+    <form class="make only-make" id="make" novalidate>
+      <div class="f">
+        <label for="pet-name">Their name</label>
+        <input type="text" id="pet-name" maxlength="24" autocomplete="off" value="Biko">
+      </div>
+      <div class="f">
+        <label for="pet-kind">They are a</label>
+        <select id="pet-kind">
+          <option value="dog" selected>Dog</option>
+          <option value="cat">Cat</option>
+          <option value="rabbit">Rabbit</option>
+          <option value="bird">Bird</option>
+          <option value="pet">Something else</option>
+        </select>
+      </div>
+      <div class="f">
+        <label for="home-date">The day they came home</label>
+        <input type="date" id="home-date" value="2019-03-16">
+      </div>
+      <div class="f">
+        <label for="birth-date">Their birthday <span class="opt">(a guess is fine)</span></label>
+        <input type="date" id="birth-date" value="2018-12-02">
+      </div>
+      <div class="f wide">
+        <label for="home-city">The town or city they came home to <span class="opt">(for the weather)</span></label>
+        <input type="text" id="home-city" maxlength="60" autocomplete="off" value="Quezon City">
+      </div>
+      <div class="f wide">
+        <span class="filebtn">
+          <label for="photos" style="display:contents">
+            <input type="file" id="photos" accept="image/jpeg,image/png,image/webp,image/heic" multiple>
+            <span class="b">Add photos</span>
+          </label>
+          <span class="small" id="photo-count">Up to 12. Saved only if you save the timeline.</span>
+        </span>
+      </div>
+      <div class="f wide check">
+        <input type="checkbox" id="is-memorial">
+        <label for="is-memorial">They have passed away, and this is in their memory</label>
+      </div>
+      <div class="f wide" id="passed-field" hidden>
+        <label for="passed-date">The day you said goodbye</label>
+        <input type="date" id="passed-date">
+      </div>
+      <p class="err f wide" id="form-error" role="alert"></p>
+      <div class="f wide actions">
+        <button class="btn" type="submit" id="make-btn">Make the timeline</button>
+        <span class="small" id="make-note">Free. No account.</span>
+      </div>
+    </form>
+  </div>
+
+  <div class="hang" aria-hidden="true">
+    <div class="tagrig" id="tagrig">
+      <div class="dring"></div>
+      <div class="loop"></div>
+      <div class="tag">
+        <div class="n" id="tag-name">BIKO</div>
+        <div class="d" id="tag-days"></div>
+        <div class="s" id="tag-since"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="story" id="timeline" aria-labelledby="story-title">
+  <div class="wrap">
+    <div class="storyhead">
+      <span class="example only-make" id="example-chip">Example timeline. Change the form above to make yours.</span>
+      <h2 id="story-title" tabindex="-1"></h2>
+      <div class="count" id="story-count"></div>
+      <div class="savebar only-make" id="savebar" hidden>
+        <button class="btn" type="button" id="save-btn">Save and get a link</button>
+        <span class="small" id="save-status" role="status">Saving gives you a page to share, with a guestbook for friends.</span>
+      </div>
+    </div>
+    <ol class="walk" id="walk"></ol>
+    <p class="closing" id="closing" hidden></p>
+    <p class="small credit">Weather from NASA POWER. Places from OpenStreetMap. Songs from the Billboard Hot 100.</p>
+  </div>
+</section>
+
+<section class="band only-view guest" id="guestbook" aria-labelledby="gb-title">
+  <div class="wrap two">
+    <div class="stack">
+      <h2 id="gb-title">Guestbook</h2>
+      <p id="gb-intro">Leave a few words for the family. Everyone who has this link can read them.</p>
+      <form class="gbform" id="gb-form" novalidate>
+        <div class="f"><label for="gb-name">Your name</label><input type="text" id="gb-name" maxlength="40" autocomplete="name"></div>
+        <div class="f"><label for="gb-msg">Your message</label><textarea id="gb-msg" maxlength="500" rows="4"></textarea></div>
+        <p class="err" id="gb-error" role="alert"></p>
+        <div><button class="btn" type="submit" id="gb-btn">Sign the guestbook</button></div>
+      </form>
+    </div>
+    <div class="stack">
+      <ol class="entries" id="gb-list" aria-live="polite"></ol>
+    </div>
+  </div>
+</section>
+
+<section class="band only-make">
+  <div class="wrap">
+    <h2>Three minutes, start to finish</h2>
+    <ol class="steps">
+      <li><h3>Give us one date</h3><p>The day they came home is all it takes. A birthday, a city and a few photos make it richer.</p></li>
+      <li><h3>Save it and share it</h3><p>Your timeline gets its own link, with a guestbook where friends can leave a message.</p></li>
+      <li><h3>Keep it, if you want</h3><p>The timeline is free. A print or a book costs money, and nobody will chase you about it.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section class="band memorial only-make" id="memorial">
+  <div class="wrap two">
+    <div class="stack">
+      <h2>For the ones who are gone</h2>
+      <p>A memorial timeline is quieter. It ends on the day you said goodbye, counts the days you had, and leaves out everything about what comes next. Friends can sign its guestbook.</p>
+      <div><button class="btn quiet" type="button" id="start-memorial">Make a memorial timeline</button></div>
+    </div>
+    <div class="stack">
+      <h3>What we promise</h3>
+      <ul>
+        <li>No countdown timers, no discounts that expire, no reminder emails about a pet you lost.</li>
+        <li>The memorial timeline and its guestbook are free, the same as every other timeline.</li>
+        <li>You can make one for a grieving friend and send them the edit link to finish it.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="keepsakes">
+  <div class="wrap two">
+    <div class="stack">
+      <div class="poster" id="poster" aria-label="Preview of the printed poster">
+        <span class="proof">Preview</span>
+        <div class="pn" id="poster-name"></div>
+        <svg id="poster-art" viewBox="0 0 300 250" preserveAspectRatio="xMidYMid meet" aria-hidden="true"></svg>
+        <div class="pf"><span id="poster-left"></span><span id="poster-right" style="text-align:right"></span></div>
+      </div>
+      <p class="small" style="margin-top:22px">The poster draws your walk together, one dot for each year.</p>
+    </div>
+    <div class="stack">
+      <h2>Keepsakes made from your timeline</h2>
+      <p>Made from the timeline above. Pay with GCash, Maya, QR Ph or card through PayMongo.</p>
+      <div class="prices">
+        <div class="price"><h3>Digital keepsake</h3><span class="amt">₱699</span><p>A printable poster and certificate, ready in a minute. Print them anywhere.</p><button type="button" data-item="digital">Buy</button></div>
+        <!-- Prints and books are off at launch. To sell them, remove "hidden" from these two rows and set PRINTS_ENABLED=1. -->
+        <div class="price" hidden><h3>Framed print</h3><span class="amt">₱2,999</span><p>The poster on heavy matte paper, framed and delivered anywhere in the Philippines.</p><button type="button" data-item="print">Buy</button></div>
+        <div class="price" hidden><h3>Memory book</h3><span class="amt">₱3,999</span><p>A hardcover book of the timeline with all your photos, delivered anywhere in the Philippines.</p><button type="button" data-item="book">Buy</button></div>
+        <div class="price"><h3>Give it as a gift</h3><span class="amt">₱699</span><p>Pay for the digital keepsake on a friend's timeline. They get the poster and certificate.</p><button type="button" data-item="gift">Buy</button></div>
+      </div>
+      <form class="shipform" id="ship-form" hidden novalidate>
+        <h3 class="wide" id="ship-title" tabindex="-1">Where should we send it?</h3>
+        <div class="f wide"><label for="ship-name">Full name</label><input type="text" id="ship-name" autocomplete="name" maxlength="80"></div>
+        <div class="f wide"><label for="ship-phone">Mobile number</label><input type="tel" id="ship-phone" autocomplete="tel" maxlength="20" placeholder="0917 123 4567"></div>
+        <div class="f wide"><label for="ship-line1">House number, street and building</label><input type="text" id="ship-line1" autocomplete="address-line1" maxlength="120"></div>
+        <div class="f wide"><label for="ship-line2">Barangay <span class="opt">(optional)</span></label><input type="text" id="ship-line2" autocomplete="address-line2" maxlength="80"></div>
+        <div class="f"><label for="ship-city">City or municipality</label><input type="text" id="ship-city" autocomplete="address-level2" maxlength="60"></div>
+        <div class="f"><label for="ship-province">Province</label><input type="text" id="ship-province" autocomplete="address-level1" maxlength="60"></div>
+        <div class="f"><label for="ship-postal">ZIP code</label><input type="text" id="ship-postal" autocomplete="postal-code" inputmode="numeric" maxlength="4"></div>
+        <p class="err wide" id="ship-error" role="alert"></p>
+        <div class="actions wide"><button class="btn" type="submit" id="ship-go">Continue to payment</button><button class="btn quiet" type="button" id="ship-cancel">Cancel</button></div>
+      </form>
+      <p class="notice" id="checkout-note" role="status"></p>
+      <p id="keepsake-ready" hidden><a class="btn" id="keepsake-link" href="/">Open your keepsake</a></p>
+    </div>
+  </div>
+</section>
+
+<section class="band only-view">
+  <div class="wrap stack">
+    <h2>Make one for your own pet</h2>
+    <p>It takes one date and about three minutes. It's free.</p>
+    <div><a class="btn" href="/">Make a timeline</a></div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap small">
+    <span>Homeday. Timelines are public to anyone with their link and are never listed or sold. <a href="/terms">Terms, privacy and refunds</a></span>
+    <span>Weather: <a href="https://power.larc.nasa.gov/">NASA POWER</a>. Places: © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>.</span>
+  </div>
+</footer>
+
+<script src="/assets/core.js"></script>
+<script src="/assets/app.js"></script>
+</body>
+</html>
