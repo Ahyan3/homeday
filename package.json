@@ -1,6 +1,6 @@
 {
   "name": "homeday",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Every day since they came home: free pet timelines with paid keepsakes.",
   "private": true,
   "type": "module",
@@ -9,7 +9,7 @@
   "engines": { "node": "22.x" },
   "scripts": {
     "test": "node --test tests/*.test.js",
-    "check": "node --check public/assets/core.js && node --check public/assets/app.js && node --check public/assets/remind.js && for f in lib/*.js; do node --check \"$f\" || exit 1; done",
+    "check": "for f in public/assets/*.js lib/*.js; do node --check \"$f\" || exit 1; done",
     "dev": "npx --yes wrangler@4 pages dev public --compatibility-date=2026-06-01"
   }
 }

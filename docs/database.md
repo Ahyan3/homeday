@@ -8,7 +8,7 @@ Supabase Postgres holds six tables and a photo bucket. The browser never touches
 | --- | --- |
 | `timelines` | One row per saved timeline. The edit key is stored only as a SHA-256 hash |
 | `guestbook` | Messages on a timeline; `hidden` when the owner removes one |
-| `orders` | One row per checkout: `pending` → `paid` (or `underpaid`) |
+| `orders` | One row per checkout, with its currency (`PHP` or `USD`): `pending` → `paid` (or `underpaid` when the amount or currency is wrong) |
 | `number_ones` | Billboard Hot 100 number one for every chart week since 1958 |
 | `reminders` | Emails that get a homeday reminder, with an unsubscribe token and the last year one was sent |
 | `app_secrets` | The server-to-database secret (`webhook`), the site address, and the email settings |
@@ -46,6 +46,7 @@ Run in order from `supabase/migrations/`:
 4. `20261120182151_homeday_reminders.sql`: reminder emails and the daily job that sends them
 5. `20261120182245_reminder_plain_subjects.sql`: plain-text email subjects
 6. `20261120182334_drop_stripe_record_order.sql`: removes the unused Stripe function
+7. `20261121021907_order_currency.sql`: orders store their currency; payments must match it
 
 Then load the songs with `supabase/seed/number_ones.sql`.
 

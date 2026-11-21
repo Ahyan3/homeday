@@ -14,6 +14,35 @@
     get: function (k) { try { return JSON.parse(localStorage.getItem(k) || "null"); } catch (e) { return null; } },
     set: function (k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* private mode */ } }
   };
+  /* ---------- region: currency, date style and units ----------
+     Visitors in the Philippines see pesos; everyone else sees US dollars. US visitors also get
+     US-style dates and Fahrenheit. A visitor can switch currency; the choice is remembered. */
+  var TZ = "", LANG = "en";
+  try { TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || ""; } catch (e) { /* old browser */ }
+  try { LANG = String(navigator.language || "en").toLowerCase(); } catch (e) { /* no navigator */ }
+  H.inPH = TZ === "Asia/Manila" || /-ph$/.test(LANG) || LANG === "fil";
+  H.us = !H.inPH && LANG === "en-us" && TZ.indexOf("America/") === 0;
+  H.locale = H.us ? "en-US" : "en-GB";
+  H.cur = (function () { var c = H.store.get("homeday:cur"); return c === "PHP" || c === "USD" ? c : (H.inPH ? "PHP" : "USD"); })();
+  H.setCur = function (c) { if (c === "PHP" || c === "USD") { H.store.set("homeday:cur", c); location.reload(); } };
+  /* Shown prices. Charged prices live in lib/shared.js; keep them the same. */
+  H.PRICES = { PHP: { digital: "₱699", gift: "₱699", print: "₱2,999", book: "₱3,999" }, USD: { digital: "US$12", gift: "US$12" } };
+  H.price = function (item, cur) { var t = H.PRICES[cur || H.cur]; return (t && t[item]) || H.PRICES.PHP[item]; };
+  /* How an overseas visitor's card is charged: in dollars once PayMongo allows it, otherwise in pesos. */
+  H.chargeNote = function (item) {
+    if (H.cur !== "USD") return Promise.resolve("");
+    return fetch("/api/checkout").then(function (r) { return r.ok ? r.json() : {}; }).catch(function () { return {}; }).then(function (j) {
+      return j.usd ? "Charged in US dollars by card."
+        : "Paid by card in Philippine pesos (" + H.price(item, "PHP") + "). Your bank converts it, usually to about " + H.price(item, "USD") + ".";
+    });
+  };
+  /* weather line in the visitor's units: "Dry, 31° / 23°C" */
+  H.wxLine = function (w, withRain) {
+    var f = function (c) { return H.us ? Math.round(c * 9 / 5 + 32) : Math.round(c); };
+    var s = w.text + ", " + f(w.hi) + "° / " + f(w.lo) + (H.us ? "°F" : "°C");
+    if (withRain && w.rain >= 1) s += ", " + (H.us ? (w.rain / 25.4).toFixed(1) + " in" : Math.round(w.rain) + " mm") + " of rain";
+    return s;
+  };
   H.keyFor = function (id) { var m = H.store.get("homeday:keys") || {}; return m[id] || null; };
   H.rememberKey = function (id, key) { var m = H.store.get("homeday:keys") || {}; m[id] = key; H.store.set("homeday:keys", m); H.store.set("homeday:last", id); };
 
@@ -29,9 +58,9 @@
     return r;
   };
   H.yearsBetween = function (a, b) { var y = b.getUTCFullYear() - a.getUTCFullYear(); if (H.addYears(a, y) > b) y--; return y; };
-  var fLong = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
-  var fShort = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
-  var fDow = new Intl.DateTimeFormat("en-GB", { weekday: "long", timeZone: "UTC" });
+  var fLong = new Intl.DateTimeFormat(H.locale, { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
+  var fShort = new Intl.DateTimeFormat(H.locale, { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
+  var fDow = new Intl.DateTimeFormat(H.locale, { weekday: "long", timeZone: "UTC" });
   H.long = function (d) { return fLong.format(d); };
   H.short = function (d) { return fShort.format(d); };
   H.dow = function (d) { return fDow.format(d); };
@@ -234,7 +263,7 @@
       if (!g) { put("weather", "We couldn't find that city"); return null; }
       if (s.home < new Date(Date.UTC(1981, 0, 1))) { put("weather", "Records start in 1981"); return g; }
       return H.weatherOn(g.lat, g.lon, s.home).then(function (w) {
-        put("weather", w ? w.text + ", " + w.hi + "° / " + w.lo + "°C" + (w.rain >= 1 ? ", " + Math.round(w.rain) + " mm of rain" : "") : "No record for that day yet");
+        put("weather", w ? H.wxLine(w, true) : "No record for that day yet");
         return g;
       });
     }).catch(function () { put("weather", "Unavailable right now"); return null; });

@@ -5,9 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Stop homeday reminders · Homeday</title>
 <meta name="robots" content="noindex">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+<link rel="preload" href="/assets/fonts/bricolage-grotesque-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/fonts.css">
 <link rel="stylesheet" href="/assets/style.css">
 </head>
 <body>
@@ -18,17 +17,13 @@
   <p id="u-lead" role="status">One moment.</p>
   <p><a class="btn" href="/">Go to Homeday</a></p>
 </main>
+<footer>
+  <div class="wrap small">
+    <nav class="foot-links" aria-label="Help and policies"><a href="/help">Help</a><a href="/terms">Terms</a><a href="/privacy">Privacy</a><a href="/refunds">Refunds</a><a href="/security">Security</a></nav>
+    <span>Homeday is run by Ryan Francis Romano in the Philippines. <a href="mailto:ahyanromano02@gmail.com">ahyanromano02@gmail.com</a></span>
+  </div>
+</footer>
 <script src="/assets/core.js"></script>
-<script>
-(function () {
-  var H = window.Homeday, $ = H.$, t = new URLSearchParams(location.search).get("t") || "";
-  function say(title, lead) { $("u-title").textContent = title; $("u-lead").textContent = lead; }
-  if (!/^[a-z0-9]{10,40}$/.test(t)) { say("This link is incomplete", "Open the link from the bottom of the reminder email again, or reply to the email and we'll stop them for you."); return; }
-  H.rpc("unsubscribe_reminder", { p_token: t }).then(function (r) {
-    if (r === "done") say("Reminders stopped", "You won't get any more homeday emails for this pet. The timeline itself stays as it is.");
-    else say("We couldn't find those reminders", "They may already be stopped. If emails keep coming, reply to one and we'll sort it out.");
-  }).catch(function () { say("That didn't work", "Check your connection and refresh this page."); });
-})();
-</script>
+<script src="/assets/unsubscribe.js"></script>
 </body>
 </html>

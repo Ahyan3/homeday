@@ -14,9 +14,8 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#14302A">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='17' r='13' fill='%23B08D4F'/%3E%3Ccircle cx='16' cy='7' r='2.5' fill='%23E7ECE3'/%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+<link rel="preload" href="/assets/fonts/bricolage-grotesque-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/fonts.css">
 <link rel="stylesheet" href="/assets/style.css">
 <link rel="stylesheet" href="/assets/pay.css">
 </head>
@@ -212,13 +211,18 @@
     </div>
     <div class="stack">
       <h2>Keepsakes made from your timeline</h2>
-      <p>Made from the timeline above. Pay with GCash, Maya, QR Ph or card through PayMongo.</p>
+      <p id="pay-ways">Made from the timeline above. Pay with GCash, Maya, QR Ph or card through PayMongo.</p>
       <div class="prices">
-        <div class="price"><h3>Digital keepsake</h3><span class="amt">₱699</span><p>A printable poster and certificate, ready in a minute. Print them anywhere.</p><button type="button" data-item="digital">Buy</button></div>
+        <div class="price"><h3>Digital keepsake</h3><span class="amt" data-price="digital">₱699</span><p>A printable poster and certificate, ready in a minute. Print them anywhere.</p><button type="button" data-item="digital">Buy</button></div>
         <!-- Prints and books are off at launch. To sell them, remove "hidden" from these two rows and set PRINTS_ENABLED=1. -->
-        <div class="price" hidden><h3>Framed print</h3><span class="amt">₱2,999</span><p>The poster on heavy matte paper, framed and delivered anywhere in the Philippines.</p><button type="button" data-item="print">Buy</button></div>
-        <div class="price" hidden><h3>Memory book</h3><span class="amt">₱3,999</span><p>A hardcover book of the timeline with all your photos, delivered anywhere in the Philippines.</p><button type="button" data-item="book">Buy</button></div>
-        <div class="price"><h3>Give it as a gift</h3><span class="amt">₱699</span><p>Pay for the digital keepsake on a friend's timeline. They get the poster and certificate.</p><button type="button" data-item="gift">Buy</button></div>
+        <div class="price" hidden><h3>Framed print</h3><span class="amt" data-price="print">₱2,999</span><p>The poster on heavy matte paper, framed and delivered anywhere in the Philippines.</p><button type="button" data-item="print">Buy</button></div>
+        <div class="price" hidden><h3>Memory book</h3><span class="amt" data-price="book">₱3,999</span><p>A hardcover book of the timeline with all your photos, delivered anywhere in the Philippines.</p><button type="button" data-item="book">Buy</button></div>
+        <div class="price"><h3>Give it as a gift</h3><span class="amt" data-price="gift">₱699</span><p>Pay for the digital keepsake on a friend's timeline. They get the poster and certificate.</p><button type="button" data-item="gift">Buy</button></div>
+      </div>
+      <p class="small" id="charge-note" hidden></p>
+      <div class="cur-switch small" role="group" aria-label="Show prices in">Show prices in
+        <button type="button" data-cur="PHP">Philippine pesos</button>
+        <button type="button" data-cur="USD">US dollars</button>
       </div>
       <form class="shipform" id="ship-form" hidden novalidate>
         <h3 class="wide" id="ship-title" tabindex="-1">Where should we send it?</h3>
@@ -249,7 +253,8 @@
 
 <footer>
   <div class="wrap small">
-    <span>Homeday. Timelines are public to anyone with their link and are never listed or sold. <a href="/terms">Terms, privacy and refunds</a></span>
+    <nav class="foot-links" aria-label="Help and policies"><a href="/help">Help</a><a href="/terms">Terms</a><a href="/privacy">Privacy</a><a href="/refunds">Refunds</a><a href="/security">Security</a></nav>
+    <span>Homeday. Timelines are public to anyone with their link and are never listed or sold.</span>
     <span>Weather: <a href="https://power.larc.nasa.gov/">NASA POWER</a>. Places: © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>.</span>
   </div>
 </footer>
@@ -257,5 +262,6 @@
 <script src="/assets/core.js"></script>
 <script src="/assets/app.js"></script>
 <script src="/assets/remind.js"></script>
+<script src="/assets/prices.js"></script>
 </body>
 </html>

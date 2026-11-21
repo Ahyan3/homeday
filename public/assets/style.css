@@ -274,3 +274,33 @@ body.paid .wm { display: none; }
 @media (max-width: 820px) {
   .copyline { flex-direction: column; }
 }
+
+/* footer links to help and policy pages */
+.foot-links { display: flex; flex-wrap: wrap; gap: 6px 18px; font-family: var(--display); }
+.foot-links a { color: var(--ink); }
+
+/* help and policy pages */
+.legal { padding: 56px 0 96px; display: grid; gap: 40px; max-width: 760px; }
+.legal section { display: grid; gap: 14px; scroll-margin-top: 24px; }
+.legal ul { margin: 0; padding-left: 1.1em; display: grid; gap: 8px; max-width: 62ch; }
+.legal p { max-width: 62ch; }
+.legal a { text-decoration-thickness: 1px; }
+.legal-toc ul { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 10px; }
+.legal-toc a { display: inline-block; font-family: var(--display); font-size: .95rem; color: var(--ink); text-decoration: none; border: 1.5px solid var(--moss); border-radius: 999px; padding: 4px 12px; }
+.legal-toc a:hover, .legal-toc a:focus-visible { background: var(--felt); border-color: var(--ink); }
+.faq { margin: 0; display: grid; gap: 4px; max-width: 62ch; }
+.faq dt { font-family: var(--display); font-weight: 600; font-size: 1.05rem; margin-top: 14px; }
+.faq dt:first-child { margin-top: 0; }
+.faq dd { margin: 0; }
+.legal-table { border-collapse: collapse; width: 100%; font-size: 1rem; }
+.legal-table th, .legal-table td { text-align: left; vertical-align: top; padding: 10px 12px 10px 0; border-bottom: 1.5px solid var(--ink); }
+.legal-table th { font-family: var(--display); font-weight: 600; font-size: .95rem; }
+@media (max-width: 640px) {
+  .legal-table thead { display: none; }
+  .legal-table tr { display: grid; padding: 10px 0; border-bottom: 1.5px solid var(--ink); }
+  .legal-table td { border: 0; padding: 2px 0; }
+  .legal-table td:first-child { font-weight: 500; }
+  .legal-table td:nth-child(2)::before { content: "Why: "; font-family: var(--display); font-size: .9rem; }
+  .legal-table td:nth-child(3)::before { content: "Kept: "; font-family: var(--display); font-size: .9rem; }
+}
+.legal .lead { font-size: 1.2rem; line-height: 1.5; max-width: 40em; }

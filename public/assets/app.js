@@ -135,7 +135,7 @@
     paying = true; priceButtons(false);
     var go = function (id) {
       note.textContent = "Opening checkout…";
-      return fetch("/api/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ timeline_id: id, item: item, shipping: shipping }) })
+      return fetch("/api/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ timeline_id: id, item: item, shipping: shipping, currency: H.cur }) })
         .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok || !j.url) throw new Error(j.error || "Checkout didn't open. Try again in a minute."); return j.url; }); })
         .then(function (url) { H.store.set("homeday:last", id); location.href = url; });
     };
@@ -175,7 +175,7 @@
 
   /* ---------- guestbook ---------- */
   function entryHtml(x, owner) {
-    var when = new Date(x.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+    var when = new Date(x.created_at).toLocaleDateString(H.locale, { day: "numeric", month: "long", year: "numeric" });
     return '<li class="entry" data-id="' + x.id + '"><p class="msg">' + H.esc(x.message) + '</p><p class="by"><b>' + H.esc(x.author) + "</b> " + when +
       (owner ? ' <button type="button" class="linkish" data-hide="' + x.id + '">Hide</button>' : "") + "</p></li>";
   }

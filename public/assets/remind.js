@@ -8,7 +8,7 @@
   var id = m[1];
   var form = $("remind-form");
   if (!form) return;
-  var fmt = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long", timeZone: "UTC" });
+  var fmt = new Intl.DateTimeFormat(H.locale, { day: "numeric", month: "long", timeZone: "UTC" });
 
   /* app.js may still be storing a ?k= edit key, so read it from the URL too */
   function key() { return new URLSearchParams(location.search).get("k") || H.keyFor(id); }

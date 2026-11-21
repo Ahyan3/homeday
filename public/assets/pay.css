@@ -9,3 +9,6 @@ input[type=tel] {
 .price button:disabled { opacity: .55; cursor: progress; }
 @media (max-width: 820px) { .shipform { grid-template-columns: 1fr; } }
 .remind .btn:disabled { opacity: .55; cursor: progress; }
+.cur-switch { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 4px; }
+.cur-switch button { font: inherit; font-family: var(--display); font-size: .92rem; color: var(--ink); background: transparent; border: 1.5px solid var(--moss); border-radius: 999px; padding: 4px 12px; cursor: pointer; }
+.cur-switch button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); cursor: default; }

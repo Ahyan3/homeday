@@ -4,11 +4,12 @@ import { test, beforeEach } from "node:test";
 import assert from "node:assert/strict";
 import { createHmac } from "node:crypto";
 
-import { handleCheckout } from "../lib/checkout.js";
+import { handleCheckout, checkoutInfo } from "../lib/checkout.js";
 import { handleWebhook } from "../lib/webhook.js";
 import { handleWeather } from "../lib/weather.js";
 import { handleGeocode } from "../lib/geocode.js";
-import { hmacHex, safeEqual } from "../lib/shared.js";
+import { hmacHex, safeEqual, SECURITY_HEADERS } from "../lib/shared.js";
+import { readFileSync } from "node:fs";
 
 const env = { PAYMONGO_SECRET_KEY: "sk_test_x", HOMEDAY_DB_SECRET: "db-secret", PAYMONGO_WEBHOOK_SECRET: "whsk_test" };
 let calls = [];
@@ -73,6 +74,33 @@ test("prints and books stay off until PRINTS_ENABLED is 1", async () => {
   assert.equal(on.status, 200);
 });
 
+test("overseas visitors pay the peso price until dollar charging is switched on", async () => {
+  const res = await handleCheckout(checkoutRequest({ timeline_id: "abcd2345", item: "digital", currency: "USD" }), env);
+  assert.equal(res.status, 200);
+  const attrs = calls.find((c) => c.url.includes("checkout_sessions")).body.data.attributes;
+  assert.deepEqual([attrs.line_items[0].currency, attrs.line_items[0].amount], ["PHP", 69900]);
+  assert.equal(calls.find((c) => c.url.includes("create_order")).body.p.currency, "PHP");
+  assert.deepEqual(await checkoutInfo(env).json(), { usd: false });
+});
+
+test("with USD_CHARGING=1 overseas visitors are charged US$12 by card", async () => {
+  const usdEnv = { ...env, USD_CHARGING: "1" };
+  const res = await handleCheckout(checkoutRequest({ timeline_id: "abcd2345", item: "digital", currency: "USD" }), usdEnv);
+  assert.equal(res.status, 200);
+  const attrs = calls.find((c) => c.url.includes("checkout_sessions")).body.data.attributes;
+  assert.deepEqual([attrs.line_items[0].currency, attrs.line_items[0].amount], ["USD", 1200]);
+  assert.deepEqual(attrs.payment_method_types, ["card"]);
+  const order = calls.find((c) => c.url.includes("create_order")).body.p;
+  assert.deepEqual([order.currency, order.amount], ["USD", 1200]);
+  assert.deepEqual(await checkoutInfo(usdEnv).json(), { usd: true });
+});
+
+test("a visitor in the Philippines is never charged in dollars", async () => {
+  await handleCheckout(checkoutRequest({ timeline_id: "abcd2345", item: "digital" }), { ...env, USD_CHARGING: "1" });
+  const attrs = calls.find((c) => c.url.includes("checkout_sessions")).body.data.attributes;
+  assert.equal(attrs.line_items[0].currency, "PHP");
+});
+
 test("physical orders need a complete Philippine address", async () => {
   const res = await handleCheckout(checkoutRequest({ timeline_id: "abcd2345", item: "book", shipping: { ...address, postal: "60" } }), { ...env, PRINTS_ENABLED: "1" });
   assert.equal(res.status, 400);
@@ -105,6 +133,7 @@ test("webhook marks a correctly signed payment as paid", async () => {
   const p = calls.find((c) => c.url.includes("mark_order_paid")).body.p;
   assert.equal(p.reference, "HD-abcd2345-digital-0a1b2c3d");
   assert.equal(p.amount, 69900);
+  assert.equal(p.currency, "PHP");
   assert.equal(p.email, "ana@example.com");
 });
 
@@ -136,4 +165,13 @@ test("place lookup returns coordinates and a short label, with a real User-Agent
   assert.match(calls[0].opts.headers["User-Agent"], /^Homeday\//);
   const none = await handleGeocode(new Request("https://homeday.pages.dev/api/geocode?q=Nowhereville"));
   assert.deepEqual(await none.json(), { none: true });
+});
+
+test("security headers are the same on Vercel, Cloudflare and in the shared code", () => {
+  const vercel = JSON.parse(readFileSync(new URL("../vercel.json", import.meta.url)));
+  const all = Object.fromEntries(vercel.headers.find((h) => h.source === "/(.*)").headers.map((h) => [h.key, h.value]));
+  assert.deepEqual(all, SECURITY_HEADERS);
+  const cf = readFileSync(new URL("../public/_headers", import.meta.url), "utf8");
+  for (const [k, v] of Object.entries(SECURITY_HEADERS)) assert.ok(cf.includes(`  ${k}: ${v}\n`), `_headers is missing ${k}`);
+  assert.match(SECURITY_HEADERS["Content-Security-Policy"], /script-src 'self';/);
 });

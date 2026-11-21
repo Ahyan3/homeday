@@ -58,14 +58,25 @@ Then delete its photos in Supabase → Storage → `photos` → the folder named
 
 ## Change prices
 
-Edit both, then deploy:
+Change all three, then deploy:
 
-- `lib/shared.js`: what PayMongo charges, in centavos (₱699 = `69900`)
-- `public/index.html` (and `public/keepsake.html` for the Buy button): what the page shows
+- `lib/shared.js`: what PayMongo charges. `PRICES` in centavos (₱699 = `69900`), `USD_PRICES` in US cents (US$12 = `1200`)
+- `public/assets/core.js`, `H.PRICES`: what visitors see, in pesos and in dollars
+- The fallback text in `public/index.html` and `public/keepsake.html`, shown for a moment before the scripts load
+
+## Charge overseas buyers in US dollars
+
+Visitors outside the Philippines already see US$12. Until this is switched on, their card is charged ₱699 and the page says so.
+
+1. Email PayMongo support and ask them to turn on **USD card acceptance** for your account.
+2. When they confirm, add `USD_CHARGING` = `1` to the host's environment variables and redeploy.
+3. Buy one keepsake from abroad (or with a VPN) in test mode and check the order shows `USD` and `1200` in `orders`.
+
+Orders store their currency, and a payment only unlocks a keepsake if its currency and amount match the order.
 
 ## Change the owner details
 
-Name and contact email are in `public/terms.html`, under "Who runs Homeday".
+The name and contact email appear on the help, terms, privacy, refunds and security pages, in their footers, in `public/keepsake.html`, `thanks.html`, `404.html` and `unsubscribe.html`, and in `public/.well-known/security.txt`. Search the `public/` folder for the old email and replace it everywhere.
 
 ## Switch on reminder emails
 

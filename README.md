@@ -15,6 +15,9 @@ Live: [homeday-eight.vercel.app](https://homeday-eight.vercel.app) · Moving to 
 - **Memorial mode.** A quieter timeline that ends on the day you said goodbye, with no upsell.
 - **Keepsakes.** A printable poster and certificate, unlocked after payment. Prints and books are built but switched off at launch.
 - **Homeday reminders.** Owners can ask for one email a year, a week before each homeday, with a link back to the timeline and the keepsake. Never for memorials. Sent from the database, so it works on any host.
+- **Works for visitors abroad.** Visitors outside the Philippines see prices in US dollars and can switch; US visitors also get Fahrenheit and US-style dates. Dollar charging switches on with one setting once PayMongo enables it.
+- **Help and policies.** Help, terms, privacy (Philippine Data Privacy Act), refunds and security pages, plus `security.txt`.
+- **Security.** Strict content security policy and security headers on both hosts, fonts served from the site, no third-party scripts.
 - **Share previews.** On Cloudflare, shared links show the pet's name, and timelines are kept out of search engines.
 
 ## How it works
@@ -44,6 +47,9 @@ public/               Website: pages, styles, browser scripts, share image
   assets/core.js      Dates, moon, timeline drawing, database calls
   assets/app.js       Page logic: form, saving, sharing, guestbook, checkout
   assets/remind.js    Reminder sign-up for timeline owners
+  assets/prices.js    Prices in the visitor's currency, and the currency switch
+  assets/fonts/       Self-hosted fonts (SIL Open Font License)
+  help, terms, privacy, refunds, security .html   Help and policy pages
   unsubscribe.html    Stops reminder emails
 lib/                  Server code shared by both hosts
   checkout.js         Creates PayMongo checkout sessions
@@ -81,10 +87,11 @@ For checkout to work locally, copy `.dev.vars.example` to `.dev.vars` and fill i
 | `PRINTS_ENABLED` | No | `1` to sell prints and books (also un-hide their rows in `public/index.html`) |
 | `PAYMONGO_METHODS` | No | Comma-separated payment methods, if you want to override what your account allows |
 | `SITE_URL` | No | Your own domain, used for PayMongo's return links |
+| `USD_CHARGING` | No | `1` to charge overseas card buyers US$12 instead of ₱699. Only after PayMongo turns on USD card acceptance for your account |
 
 Reminder email settings (`resend_api_key`, `reminder_from`, `site_url`) live in the database's `app_secrets` table, not on the host. See [operations](docs/operations.md#switch-on-reminder-emails).
 
-Prices live in `lib/shared.js` (in centavos) and in `public/index.html` (what the page shows). Keep them the same.
+Charged prices live in `lib/shared.js` (`PRICES` in centavos, `USD_PRICES` in US cents). Shown prices live in `H.PRICES` in `public/assets/core.js`. Keep them the same.
 
 ## Documentation
 

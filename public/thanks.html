@@ -5,9 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Thank you · Homeday</title>
 <meta name="robots" content="noindex">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+<link rel="preload" href="/assets/fonts/bricolage-grotesque-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/fonts.css">
 <link rel="stylesheet" href="/assets/style.css">
 </head>
 <body>
@@ -24,13 +23,13 @@
     <a class="btn" href="/">Go to Homeday</a>
   </div>
 </main>
+<footer>
+  <div class="wrap small">
+    <nav class="foot-links" aria-label="Help and policies"><a href="/help">Help</a><a href="/terms">Terms</a><a href="/privacy">Privacy</a><a href="/refunds">Refunds</a><a href="/security">Security</a></nav>
+    <span>Homeday is run by Ryan Francis Romano in the Philippines. <a href="mailto:ahyanromano02@gmail.com">ahyanromano02@gmail.com</a></span>
+  </div>
+</footer>
 <script src="/assets/core.js"></script>
-<script>
-(function () {
-  var H = window.Homeday, id = new URLSearchParams(location.search).get("t") || H.store.get("homeday:last");
-  if (!id || !/^[a-z0-9]{6,12}$/.test(id)) return;
-  H.$("t-actions").innerHTML = '<a class="btn" href="/keepsake/' + id + '?paid=1">Open the keepsake</a> <a class="btn quiet" href="/t/' + id + '">Back to the timeline</a>';
-})();
-</script>
+<script src="/assets/thanks.js"></script>
 </body>
 </html>

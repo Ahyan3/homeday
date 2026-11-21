@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.2.0: 21 November 2026
+
+### Added
+- Visitors outside the Philippines see prices in US dollars (US$12), with a switch between pesos and dollars. US visitors also see Fahrenheit, inches of rain and US-style dates.
+- Dollar charging for overseas card buyers, off until `USD_CHARGING=1` (needs PayMongo's USD card acceptance). Orders now record their currency, and payments must match it.
+- Help, Terms of service, Privacy policy, Refund policy and Security pages, a footer linking them on every page, and `/.well-known/security.txt`.
+- Security headers on Vercel and Cloudflare: content security policy, HSTS, frame blocking, permissions policy. Timelines and keepsakes are marked `noindex` on Vercel too.
+
+### Changed
+- Fonts are served from the site instead of Google Fonts.
+- Inline scripts moved into files so the content security policy can block injected scripts.
+
 ## 1.1.0: 21 November 2026
 
 ### Added
