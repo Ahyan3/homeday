@@ -31,7 +31,7 @@ Storage bucket `photos` is public for reading by URL. Anyone may upload JPEG, PN
 | `add_reminder(id, key, email)` | Browser | Turns on yearly reminders for a living pet, if the edit key matches. Up to 5 emails per timeline |
 | `reminder_emails(id, key)` | Browser | Lists a timeline's reminder emails, for the owner only |
 | `unsubscribe_reminder(token)` | Browser | Stops reminders from the link in an email |
-| `submit_manual_payment(id, item, name, email, ref)` | Browser | Records a GCash/Maya payment to check. Each reference number once; 5 an hour per timeline, 60 an hour site-wide |
+| `submit_manual_payment(id, item, name, email, ref, wallet?)` | Browser | Records a QR code payment to check, and which QR (GCash, Maya or GoTyme) it was paid to. Each reference number once; 5 an hour per timeline, 60 an hour site-wide |
 | `manual_pending(id)` | Browser | Whether a GCash/Maya payment for a timeline is waiting to be checked |
 | `admin_orders(key)` / `admin_review(key, order, ok)` | Admin page | Lists payments to check, and confirms or rejects one. Need the admin key, stored only as a hash |
 
@@ -52,8 +52,9 @@ Run in order from `supabase/migrations/`:
 7. `20261121021907_order_currency.sql`: orders store their currency; payments must match it
 8. `20261121023054_manual_payments.sql`: GCash/Maya payments checked by hand, and the admin functions
 9. `20261121023121_order_emails_plain.sql`: order emails without the reminder footer
+10. `20261121024226_manual_payment_wallet.sql`: which QR code (GCash, Maya or GoTyme) a payment went to
 
-After running them, set the admin key: see [operations](operations.md#take-gcash-or-maya-payments-by-hand).
+After running them, set the admin key: see [operations](operations.md#take-qr-code-payments-by-hand).
 
 Then load the songs with `supabase/seed/number_ones.sql`.
 

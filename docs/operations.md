@@ -64,16 +64,16 @@ Change all three, then deploy:
 - `public/assets/core.js`, `H.PRICES`: what visitors see, in pesos and in dollars
 - The fallback text in `public/index.html` and `public/keepsake.html`, shown for a moment before the scripts load
 
-## Take GCash or Maya payments by hand
+## Take QR code payments by hand
 
-Until PayMongo is live, buyers can pay by scanning your GCash or Maya QR code. They send the reference number from their receipt, and you confirm it on the admin page. Confirming unlocks their keepsake and, once Resend is set up, emails them the link. When `PAYMONGO_SECRET_KEY` is set, the site switches to PayMongo checkout by itself.
+Until PayMongo is live, buyers can pay by scanning your GCash, Maya or GoTyme QR code. All three are QR Ph codes, so any Philippine bank or e-wallet app can pay them, and buyers say which one they used. They send the reference number from their receipt, and you confirm it on the admin page. Confirming unlocks their keepsake and, once Resend is set up, emails them the link. When `PAYMONGO_SECRET_KEY` is set, the site switches to PayMongo checkout by itself.
 
-**Turn it on:** save your QR code as `public/assets/pay/qr.png`, set `H.MANUAL_PAY.on` to `true` in `public/assets/core.js` (and `account` to the name buyers should see, such as `"Ryan R. · GCash"`), then deploy.
+**Settings:** `H.MANUAL_PAY` in `public/assets/core.js` lists the QR codes (images in `public/assets/pay/`, cropped so they show no phone or account numbers) and the name shown under them. Set `on` to `false` to hide QR payments. To add or replace a code, crop the image to the QR alone and check it still scans before you deploy.
 
 **Every day (lunch break and evening):**
 
 1. Open `/admin` on your phone. The first time, paste your admin key; the browser remembers it.
-2. For each payment, open GCash or Maya and find the reference number in your transactions. Check the amount is ₱699.
+2. Each payment says which app it was paid to. Open that app and find the reference number in your transactions. Check the amount is ₱699.
 3. Tap **Received, unlock it** twice. If you can't find the payment, tap **Not in my account** twice and email the buyer.
 
 The site promises buyers an answer within a day. Each reference number can only be used once, and each timeline can send at most 5 payments an hour.

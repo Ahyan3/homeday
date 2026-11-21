@@ -28,9 +28,18 @@
   /* Shown prices. Charged prices live in lib/shared.js; keep them the same. */
   H.PRICES = { PHP: { digital: "₱699", gift: "₱699", print: "₱2,999", book: "₱3,999" }, USD: { digital: "US$12", gift: "US$12" } };
   H.price = function (item, cur) { var t = H.PRICES[cur || H.cur]; return (t && t[item]) || H.PRICES.PHP[item]; };
-  /* How people pay. "card" = PayMongo checkout. "manual" = GCash or Maya by QR code, checked by hand,
-     used until PayMongo is live. "off" = neither. Turn manual payments on with MANUAL_PAY.on. */
-  H.MANUAL_PAY = { on: false, qr: "/assets/pay/qr.png", account: "" };
+  /* How people pay. "card" = PayMongo checkout. "manual" = QR code (GCash, Maya or GoTyme), checked by
+     hand, used until PayMongo is live. "off" = neither. All three are QR Ph codes, so any Philippine
+     bank or e-wallet app can pay any of them; the buyer just tells us which one they used. */
+  H.MANUAL_PAY = {
+    on: true,
+    account: "Ryan Francis Romano",
+    wallets: [
+      { id: "gcash", name: "GCash", qr: "/assets/pay/gcash.png" },
+      { id: "maya", name: "Maya", qr: "/assets/pay/maya.png" },
+      { id: "gotyme", name: "GoTyme", qr: "/assets/pay/gotyme.png" }
+    ]
+  };
   var payInfo = null;
   H.payInfo = function () {
     if (!payInfo) payInfo = fetch("/api/checkout").then(function (r) { return r.ok ? r.json() : {}; }).catch(function () { return {}; });
@@ -41,8 +50,8 @@
   H.chargeNote = function (item) {
     return H.payInfo().then(function (j) {
       if (!j.card && H.MANUAL_PAY.on) {
-        return "Pay " + H.price(item, "PHP") + " with GCash or Maya by scanning our QR code. We check each payment by hand, usually within a few hours."
-          + (H.inPH ? "" : " GCash and Maya need a Philippine account; card payments from abroad open soon.");
+        return "Pay " + H.price(item, "PHP") + " by scanning our QR code with GCash, Maya, GoTyme or your bank's app. We check each payment by hand, usually within a few hours."
+          + (H.inPH ? "" : " This needs a Philippine bank or e-wallet account; card payments from abroad open soon.");
       }
       if (H.cur !== "USD" || !j.card) return "";
       return j.usd ? "Charged in US dollars by card."

@@ -1,5 +1,5 @@
 /* Keepsake prices in the visitor's currency, how they pay, and a switch between pesos and US dollars.
-   While payments are by GCash/Maya QR (before PayMongo is live), everyone sees peso prices. */
+   While payments are by QR code (before PayMongo is live), everyone sees peso prices. */
 (function () {
   "use strict";
   var H = window.Homeday, $ = H.$;
@@ -10,7 +10,7 @@
   H.payMode().then(function (mode) {
     if (mode !== "manual") return;
     show("PHP");
-    if (ways) ways.textContent = "Made from the timeline above. Pay with GCash or Maya by scanning our QR code.";
+    if (ways) ways.textContent = "Made from the timeline above. Pay with GCash, Maya, GoTyme or your bank's app by scanning our QR code.";
     if (sw) sw.hidden = true;
   });
   H.chargeNote("digital").then(function (t) { var n = $("charge-note"); if (n) { n.textContent = t; n.hidden = !t; } });

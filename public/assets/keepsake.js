@@ -51,7 +51,7 @@
         $("buy-btn").hidden = false;
         H.rpc("manual_pending", { p_id: id }).then(function (waiting) {
           if (!waiting) return;
-          $("ks-lead").textContent = "We're checking your GCash or Maya payment. This page unlocks by itself once it's confirmed, and we'll email you.";
+          $("ks-lead").textContent = "We're checking your payment. This page unlocks by itself once it's confirmed, and we'll email you.";
           $("buy-btn").hidden = true;
           setTimeout(load, 60000);
         }, function () { /* preview still works */ });

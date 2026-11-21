@@ -1,9 +1,14 @@
 # Changelog
 
+## 1.3.1: 21 November 2026
+
+### Changed
+- QR payments switched on, with GCash, Maya and GoTyme codes to choose from. Payments record which code was used.
+
 ## 1.3.0: 21 November 2026
 
 ### Added
-- GCash and Maya payments by QR code, checked by hand, for before PayMongo is live. Buyers send the reference number; the owner confirms it on `/admin` and the keepsake unlocks. Off until the QR code is added.
+- Payments by QR code (GCash, Maya or GoTyme, all QR Ph), checked by hand, for before PayMongo is live. Buyers pick a code, pay, and send the reference number; the owner confirms it on `/admin` and the keepsake unlocks. QR images are cropped to hide phone and account numbers.
 - Admin page with an admin key stored only as a hash. Payments need two taps to confirm or reject.
 - The keepsake page says when a payment is being checked, and unlocks by itself once it's confirmed.
 

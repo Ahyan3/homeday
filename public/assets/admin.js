@@ -1,4 +1,4 @@
-/* Owner page: confirm or reject GCash/Maya payments. Confirming unlocks the buyer's keepsake.
+/* Owner page: confirm or reject QR code payments. Confirming unlocks the buyer's keepsake.
    The admin key is checked by the database; this browser keeps it after it works once. */
 (function () {
   "use strict";
@@ -20,6 +20,8 @@
     item.querySelector(".nm").textContent = o.payer_name || "";
     item.querySelector(".em").textContent = pending ? (o.email || "") : (o.status === "paid" ? "Confirmed" : "Rejected") + " " + when(o.reviewed_at);
     var what = item.querySelector(".adm-what");
+    var WALLET = { gcash: "GCash", maya: "Maya", gotyme: "GoTyme" };
+    if (o.payer_wallet) item.querySelector(".adm-ref span").textContent = "Reference · paid to " + WALLET[o.payer_wallet];
     what.textContent = (o.item === "gift" ? "Gift keepsake" : "Digital keepsake") + " for " + (o.pet || "a deleted timeline") + " · ₱" + ((o.expected_amount || 69900) / 100) + (pending ? " · sent " + when(o.created_at) : "") + " · ";
     var a = document.createElement("a"); a.href = "/t/" + o.timeline_id; a.textContent = "timeline"; a.target = "_blank"; a.rel = "noopener"; what.appendChild(a);
     if (pending) {
@@ -47,7 +49,7 @@
       r.pending.forEach(function (o) { p.appendChild(li(o, true)); });
       r.recent.forEach(function (o) { d.appendChild(li(o, false)); });
       $("adm-lead").textContent = r.pending.length
-        ? r.pending.length + (r.pending.length === 1 ? " payment" : " payments") + " to check. Open GCash or Maya, find each reference number in your transactions, and check the amount is ₱699."
+        ? r.pending.length + (r.pending.length === 1 ? " payment" : " payments") + " to check. Open the app it was paid to, find the reference number in your transactions, and check the amount is ₱699."
         : "Nothing to check. New payments appear here.";
       if (!r.recent.length) d.innerHTML = '<li class="small">None yet.</li>';
     });
