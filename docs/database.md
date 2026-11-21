@@ -31,6 +31,9 @@ Storage bucket `photos` is public for reading by URL. Anyone may upload JPEG, PN
 | `add_reminder(id, key, email)` | Browser | Turns on yearly reminders for a living pet, if the edit key matches. Up to 5 emails per timeline |
 | `reminder_emails(id, key)` | Browser | Lists a timeline's reminder emails, for the owner only |
 | `unsubscribe_reminder(token)` | Browser | Stops reminders from the link in an email |
+| `submit_manual_payment(id, item, name, email, ref)` | Browser | Records a GCash/Maya payment to check. Each reference number once; 5 an hour per timeline, 60 an hour site-wide |
+| `manual_pending(id)` | Browser | Whether a GCash/Maya payment for a timeline is waiting to be checked |
+| `admin_orders(key)` / `admin_review(key, order, ok)` | Admin page | Lists payments to check, and confirms or rejects one. Need the admin key, stored only as a hash |
 
 The functions that take `secret` refuse to run unless it matches `app_secrets.webhook`. That value lives only in the database and in the host's `HOMEDAY_DB_SECRET`.
 
@@ -47,6 +50,10 @@ Run in order from `supabase/migrations/`:
 5. `20261120182245_reminder_plain_subjects.sql`: plain-text email subjects
 6. `20261120182334_drop_stripe_record_order.sql`: removes the unused Stripe function
 7. `20261121021907_order_currency.sql`: orders store their currency; payments must match it
+8. `20261121023054_manual_payments.sql`: GCash/Maya payments checked by hand, and the admin functions
+9. `20261121023121_order_emails_plain.sql`: order emails without the reminder footer
+
+After running them, set the admin key: see [operations](operations.md#take-gcash-or-maya-payments-by-hand).
 
 Then load the songs with `supabase/seed/number_ones.sql`.
 

@@ -134,6 +134,13 @@
     var note = $("checkout-note");
     paying = true; priceButtons(false);
     var go = function (id) {
+      return H.payMode().then(function (mode) {
+        if (mode === "manual") { note.textContent = ""; paying = false; priceButtons(true); H.openManual(id, item, $("manual-pay")); return; }
+        if (mode === "off") throw new Error("Keepsakes go on sale soon. Your timeline is saved, so come back to it any time.");
+        return card(id);
+      });
+    };
+    var card = function (id) {
       note.textContent = "Opening checkout…";
       return fetch("/api/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ timeline_id: id, item: item, shipping: shipping, currency: H.cur }) })
         .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok || !j.url) throw new Error(j.error || "Checkout didn't open. Try again in a minute."); return j.url; }); })

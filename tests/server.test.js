@@ -80,7 +80,8 @@ test("overseas visitors pay the peso price until dollar charging is switched on"
   const attrs = calls.find((c) => c.url.includes("checkout_sessions")).body.data.attributes;
   assert.deepEqual([attrs.line_items[0].currency, attrs.line_items[0].amount], ["PHP", 69900]);
   assert.equal(calls.find((c) => c.url.includes("create_order")).body.p.currency, "PHP");
-  assert.deepEqual(await checkoutInfo(env).json(), { usd: false });
+  assert.deepEqual(await checkoutInfo(env).json(), { card: true, usd: false });
+  assert.deepEqual(await checkoutInfo({}).json(), { card: false, usd: false });
 });
 
 test("with USD_CHARGING=1 overseas visitors are charged US$12 by card", async () => {
@@ -92,7 +93,7 @@ test("with USD_CHARGING=1 overseas visitors are charged US$12 by card", async ()
   assert.deepEqual(attrs.payment_method_types, ["card"]);
   const order = calls.find((c) => c.url.includes("create_order")).body.p;
   assert.deepEqual([order.currency, order.amount], ["USD", 1200]);
-  assert.deepEqual(await checkoutInfo(usdEnv).json(), { usd: true });
+  assert.deepEqual(await checkoutInfo(usdEnv).json(), { card: true, usd: true });
 });
 
 test("a visitor in the Philippines is never charged in dollars", async () => {

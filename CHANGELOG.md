@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.3.0: 21 November 2026
+
+### Added
+- GCash and Maya payments by QR code, checked by hand, for before PayMongo is live. Buyers send the reference number; the owner confirms it on `/admin` and the keepsake unlocks. Off until the QR code is added.
+- Admin page with an admin key stored only as a hash. Payments need two taps to confirm or reject.
+- The keepsake page says when a payment is being checked, and unlocks by itself once it's confirmed.
+
+### Changed
+- Order emails no longer carry the reminder unsubscribe footer.
+- Help, terms, privacy, refunds and security pages explain QR payments.
+
 ## 1.2.0: 21 November 2026
 
 ### Added

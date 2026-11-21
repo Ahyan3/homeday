@@ -2,7 +2,7 @@
 .shipform { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; background: var(--paper); border: 1.5px solid var(--ink); border-radius: 14px; padding: 22px; }
 .shipform .wide { grid-column: 1 / -1; }
 .shipform h3:focus { outline: none; }
-input[type=tel] {
+input[type=tel], input[type=email], input[type=password] {
   font: inherit; font-family: var(--display); font-size: 1.05rem; color: var(--ink);
   background: #fff; border: 1.5px solid var(--moss); border-radius: 8px; padding: 10px 12px; width: 100%; min-height: 46px;
 }
@@ -12,3 +12,26 @@ input[type=tel] {
 .cur-switch { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 4px; }
 .cur-switch button { font: inherit; font-family: var(--display); font-size: .92rem; color: var(--ink); background: transparent; border: 1.5px solid var(--moss); border-radius: 999px; padding: 4px 12px; cursor: pointer; }
 .cur-switch button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); cursor: default; }
+/* GCash/Maya payment panel */
+.manualpay { display: grid; gap: 18px; background: var(--paper); border: 1.5px solid var(--ink); border-radius: 14px; padding: 22px; }
+.manualpay h3:focus { outline: none; }
+.mp-grid { display: grid; grid-template-columns: auto 1fr; gap: 20px; align-items: start; }
+.mp-qr { margin: 0; display: grid; gap: 6px; justify-items: center; }
+.mp-qr img { width: 220px; height: 220px; object-fit: contain; background: #fff; border: 1.5px solid var(--ink); border-radius: 10px; padding: 8px; }
+.mp-qr figcaption { font-family: var(--display); font-size: .92rem; }
+.mp-steps { margin: 0; padding-left: 1.2em; display: grid; gap: 8px; }
+.mp-form { display: grid; gap: 14px; }
+@media (max-width: 640px) { .mp-grid { grid-template-columns: 1fr; justify-items: center; } }
+/* admin page */
+.admin { padding: 48px 0 96px; display: grid; gap: 22px; max-width: 760px; }
+#adm-main { display: grid; gap: 22px; }
+#adm-main h2 { margin-top: 18px; }
+.adm-login { display: grid; gap: 14px; max-width: 420px; }
+.adm-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+.adm-item { display: grid; gap: 10px; background: var(--paper); border: 1.5px solid var(--ink); border-radius: 14px; padding: 18px; }
+.adm-item.paid, .adm-item.rejected { background: transparent; border-color: var(--moss); padding: 12px 18px; }
+.adm-ref { display: grid; }
+.adm-ref b { font-family: var(--display); font-size: 1.6rem; font-variant-numeric: tabular-nums; letter-spacing: .02em; }
+.adm-item.paid .adm-ref b, .adm-item.rejected .adm-ref b { font-size: 1.1rem; }
+.adm-who { display: grid; }
+.linklike { font: inherit; background: none; border: 0; padding: 0; color: var(--ink); text-decoration: underline; cursor: pointer; }

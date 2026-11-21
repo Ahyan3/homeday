@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Payments to check · Homeday</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#14302A">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='17' r='13' fill='%23B08D4F'/%3E%3Ccircle cx='16' cy='7' r='2.5' fill='%23E7ECE3'/%3E%3C/svg%3E">
+<link rel="preload" href="/assets/fonts/bricolage-grotesque-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/fonts.css">
+<link rel="stylesheet" href="/assets/style.css">
+<link rel="stylesheet" href="/assets/pay.css">
+</head>
+<body>
+<header class="wrap top"><a class="mark" href="/">Homeday</a><nav aria-label="Admin"><button type="button" class="linklike" id="adm-refresh" hidden>Refresh</button><button type="button" class="linklike" id="adm-forget" hidden>Sign out</button></nav></header>
+<div class="collar" aria-hidden="true"><div class="holes"><i></i><i></i><i></i><i></i></div></div>
+<main class="wrap admin">
+  <h1>Payments to check</h1>
+
+  <form class="adm-login" id="adm-login" novalidate>
+    <div class="f"><label for="adm-key">Admin key</label><input type="password" id="adm-key" autocomplete="current-password" spellcheck="false"></div>
+    <p class="err" id="adm-login-err" role="alert"></p>
+    <div><button class="btn" type="submit">Open</button></div>
+    <p class="small">This browser remembers the key after it works. Only use it on your own phone or computer.</p>
+  </form>
+
+  <section id="adm-main" hidden>
+    <p id="adm-lead" role="status"></p>
+    <ol class="adm-list" id="adm-pending"></ol>
+    <h2>Recently checked</h2>
+    <ol class="adm-list done" id="adm-recent"></ol>
+  </section>
+</main>
+<script src="/assets/core.js"></script>
+<script src="/assets/admin.js"></script>
+</body>
+</html>

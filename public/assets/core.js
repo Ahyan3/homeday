@@ -28,10 +28,23 @@
   /* Shown prices. Charged prices live in lib/shared.js; keep them the same. */
   H.PRICES = { PHP: { digital: "₱699", gift: "₱699", print: "₱2,999", book: "₱3,999" }, USD: { digital: "US$12", gift: "US$12" } };
   H.price = function (item, cur) { var t = H.PRICES[cur || H.cur]; return (t && t[item]) || H.PRICES.PHP[item]; };
-  /* How an overseas visitor's card is charged: in dollars once PayMongo allows it, otherwise in pesos. */
+  /* How people pay. "card" = PayMongo checkout. "manual" = GCash or Maya by QR code, checked by hand,
+     used until PayMongo is live. "off" = neither. Turn manual payments on with MANUAL_PAY.on. */
+  H.MANUAL_PAY = { on: false, qr: "/assets/pay/qr.png", account: "" };
+  var payInfo = null;
+  H.payInfo = function () {
+    if (!payInfo) payInfo = fetch("/api/checkout").then(function (r) { return r.ok ? r.json() : {}; }).catch(function () { return {}; });
+    return payInfo;
+  };
+  H.payMode = function () { return H.payInfo().then(function (j) { return j.card ? "card" : H.MANUAL_PAY.on ? "manual" : "off"; }); };
+  /* the line under the prices that says how this visitor will pay */
   H.chargeNote = function (item) {
-    if (H.cur !== "USD") return Promise.resolve("");
-    return fetch("/api/checkout").then(function (r) { return r.ok ? r.json() : {}; }).catch(function () { return {}; }).then(function (j) {
+    return H.payInfo().then(function (j) {
+      if (!j.card && H.MANUAL_PAY.on) {
+        return "Pay " + H.price(item, "PHP") + " with GCash or Maya by scanning our QR code. We check each payment by hand, usually within a few hours."
+          + (H.inPH ? "" : " GCash and Maya need a Philippine account; card payments from abroad open soon.");
+      }
+      if (H.cur !== "USD" || !j.card) return "";
       return j.usd ? "Charged in US dollars by card."
         : "Paid by card in Philippine pesos (" + H.price(item, "PHP") + "). Your bank converts it, usually to about " + H.price(item, "USD") + ".";
     });

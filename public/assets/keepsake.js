@@ -49,6 +49,12 @@
       } else {
         $("ks-lead").textContent = "This is a preview. Buy the keepsake to print the poster and certificate without the watermark.";
         $("buy-btn").hidden = false;
+        H.rpc("manual_pending", { p_id: id }).then(function (waiting) {
+          if (!waiting) return;
+          $("ks-lead").textContent = "We're checking your GCash or Maya payment. This page unlocks by itself once it's confirmed, and we'll email you.";
+          $("buy-btn").hidden = true;
+          setTimeout(load, 60000);
+        }, function () { /* preview still works */ });
         H.chargeNote("digital").then(function (t) { $("ks-charge").textContent = t; $("ks-charge").hidden = !t; });
         if (tries >= 12) $("ks-note").textContent = "We haven't received confirmation of your payment yet. Refresh this page in a minute. If it still doesn't unlock, email us your PayMongo receipt and we'll sort it out.";
       }
@@ -56,11 +62,20 @@
   }
   $("print-btn").addEventListener("click", function () { window.print(); });
   $("buy-btn").addEventListener("click", function () {
-    var b = $("buy-btn"); b.disabled = true; $("ks-note").textContent = "Opening checkout…";
+    var b = $("buy-btn"); b.disabled = true;
+    H.payMode().then(function (mode) {
+      b.disabled = false;
+      if (mode === "manual") { H.openManual(id, "digital", $("ks-manual")); return; }
+      if (mode === "off") { $("ks-note").textContent = "Keepsakes go on sale soon. Come back to this page any time."; return; }
+      card(b);
+    });
+  });
+  function card(b) {
+    b.disabled = true; $("ks-note").textContent = "Opening checkout…";
     fetch("/api/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ timeline_id: id, item: "digital", currency: H.cur }) })
       .then(function (r) { return r.json().then(function (j) { if (!r.ok || !j.url) throw new Error(j.error || "Checkout didn't open."); return j.url; }); })
       .then(function (url) { H.store.set("homeday:last", id); location.href = url; })
       .catch(function (e) { b.disabled = false; $("ks-note").textContent = e.message; });
-  });
+  }
   load();
 })();

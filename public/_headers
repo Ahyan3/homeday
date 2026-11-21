@@ -12,3 +12,6 @@
   Cache-Control: public, max-age=31536000, immutable
 /keepsake/*
   X-Robots-Tag: noindex
+/admin
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-store

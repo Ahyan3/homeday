@@ -64,6 +64,24 @@ Change all three, then deploy:
 - `public/assets/core.js`, `H.PRICES`: what visitors see, in pesos and in dollars
 - The fallback text in `public/index.html` and `public/keepsake.html`, shown for a moment before the scripts load
 
+## Take GCash or Maya payments by hand
+
+Until PayMongo is live, buyers can pay by scanning your GCash or Maya QR code. They send the reference number from their receipt, and you confirm it on the admin page. Confirming unlocks their keepsake and, once Resend is set up, emails them the link. When `PAYMONGO_SECRET_KEY` is set, the site switches to PayMongo checkout by itself.
+
+**Turn it on:** save your QR code as `public/assets/pay/qr.png`, set `H.MANUAL_PAY.on` to `true` in `public/assets/core.js` (and `account` to the name buyers should see, such as `"Ryan R. · GCash"`), then deploy.
+
+**Every day (lunch break and evening):**
+
+1. Open `/admin` on your phone. The first time, paste your admin key; the browser remembers it.
+2. For each payment, open GCash or Maya and find the reference number in your transactions. Check the amount is ₱699.
+3. Tap **Received, unlock it** twice. If you can't find the payment, tap **Not in my account** twice and email the buyer.
+
+The site promises buyers an answer within a day. Each reference number can only be used once, and each timeline can send at most 5 payments an hour.
+
+**Change the admin key:** make a long random key, then in the Supabase SQL editor run
+`update public.app_secrets set value = encode(extensions.digest('YOUR-NEW-KEY', 'sha256'), 'hex') where name = 'admin_key_hash';`
+Only its hash is stored, so a lost key can't be recovered, only replaced.
+
 ## Charge overseas buyers in US dollars
 
 Visitors outside the Philippines already see US$12. Until this is switched on, their card is charged ₱699 and the page says so.
