@@ -196,3 +196,22 @@ test("a backup turns into restore SQL that keeps ids and survives tricky text", 
   assert.deepEqual(JSON.parse(m[2]), backup.tables.timelines);
   assert.throws(() => backupToSql({ format: 2 }), /isn't a Homeday backup/);
 });
+
+test("every Taglish phrase keeps its placeholders, and simple H.t() calls have a translation", async () => {
+  const { readdirSync } = await import("node:fs");
+  const vm = await import("node:vm");
+  const box = { window: {} };
+  vm.runInNewContext(readFileSync(new URL("../public/assets/tl.js", import.meta.url), "utf8"), box);
+  const TL = box.window.HOMEDAY_TL;
+  const ph = (x) => (x.match(/\{\w+\}/g) || []).sort().join();
+  for (const [en, tl] of Object.entries(TL)) assert.equal(ph(tl), ph(en), `placeholders differ for: ${en}`);
+  const dir = new URL("../public/assets/", import.meta.url);
+  for (const f of readdirSync(dir).filter((f) => f.endsWith(".js") && f !== "tl.js")) {
+    const src = readFileSync(new URL(f, dir), "utf8");
+    for (const m of src.matchAll(/H\.t\("((?:[^"\\]|\\.)*)"/g)) {
+      const key = JSON.parse(`"${m[1]}"`);
+      if (key.includes("{x}") && key.startsWith("English text")) continue;
+      assert.ok(TL[key], `${f}: no Taglish for "${key}"`);
+    }
+  }
+});

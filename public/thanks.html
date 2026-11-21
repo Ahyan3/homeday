@@ -10,17 +10,17 @@
 <link rel="stylesheet" href="/assets/style.css">
 </head>
 <body>
-<header class="wrap top"><a class="mark" href="/">Homeday</a></header>
+<header class="wrap top"><a class="mark" href="/">Homeday</a><nav aria-label="Language"><button type="button" class="langswitch" data-lang>Taglish</button></nav></header>
 <div class="collar" aria-hidden="true"><div class="holes"><i></i><i></i><i></i><i></i></div></div>
 <main class="wrap stack thanks">
-  <h1>Thank you. Your order is in.</h1>
-  <p id="t-lead">PayMongo sends your receipt by email.</p>
+  <h1 data-t>Thank you. Your order is in.</h1>
+  <p id="t-lead" data-t>PayMongo sends your receipt by email.</p>
   <ul>
-    <li>A <b>digital keepsake</b> unlocks within a minute. Open it from the button below.</li>
-    <li>A <b>framed print</b> or <b>memory book</b> is made to order. We'll email you when it's on its way.</li>
+    <li data-t>A digital keepsake unlocks within a minute. Open it from the button below.</li>
+    <li hidden>A framed print or memory book is made to order. We'll email you when it's on its way.</li>
   </ul>
   <div class="actions" id="t-actions">
-    <a class="btn" href="/">Go to Homeday</a>
+    <a class="btn" href="/" data-t>Go to Homeday</a>
   </div>
 </main>
 <footer>
@@ -29,6 +29,7 @@
     <span>Homeday is run by Ryan Francis Romano in the Philippines. <a href="mailto:ahyanromano02@gmail.com">ahyanromano02@gmail.com</a></span>
   </div>
 </footer>
+<script src="/assets/tl.js"></script>
 <script src="/assets/core.js"></script>
 <script src="/assets/thanks.js"></script>
 </body>

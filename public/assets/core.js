@@ -50,19 +50,46 @@
   H.chargeNote = function (item) {
     return H.payInfo().then(function (j) {
       if (!j.card && H.MANUAL_PAY.on) {
-        return "Pay " + H.price(item, "PHP") + " by scanning our QR code with GCash, Maya, GoTyme or your bank's app. We check each payment by hand, usually within a few hours."
-          + (H.inPH ? "" : " This needs a Philippine bank or e-wallet account; card payments from abroad open soon.");
+        return H.t("Pay {price} by scanning our QR code with GCash, Maya, GoTyme or your bank's app. We check each payment by hand, usually within a few hours.", { price: H.price(item, "PHP") })
+          + (H.inPH ? "" : " " + H.t("This needs a Philippine bank or e-wallet account; card payments from abroad open soon."));
       }
       if (H.cur !== "USD" || !j.card) return "";
-      return j.usd ? "Charged in US dollars by card."
-        : "Paid by card in Philippine pesos (" + H.price(item, "PHP") + "). Your bank converts it, usually to about " + H.price(item, "USD") + ".";
+      return j.usd ? H.t("Charged in US dollars by card.")
+        : H.t("Paid by card in Philippine pesos ({php}). Your bank converts it, usually to about {usd}.", { php: H.price(item, "PHP"), usd: H.price(item, "USD") });
     });
+  };
+  /* ---------- language: English or Taglish ----------
+     H.t("English text {x}", { x: 1 }) returns the Taglish version from assets/tl.js when the visitor
+     chose Taglish, otherwise the English. Elements with data-t get their text swapped the same way. */
+  H.lang = (function () { var l = H.store.get("homeday:lang"); return l === "tl" || l === "en" ? l : (/^(fil|tl)\b/.test(LANG) ? "tl" : "en"); })();
+  H.setLang = function (l) { if (l === "tl" || l === "en") { H.store.set("homeday:lang", l); location.reload(); } };
+  H.t = function (s, v) {
+    var d = H.lang === "tl" ? global.HOMEDAY_TL : null, out = (d && d[s]) || s;
+    return v ? out.replace(/\{(\w+)\}/g, function (m, k) { return v[k] != null ? v[k] : m; }) : out;
+  };
+  H.translatePage = function () {
+    document.querySelectorAll("[data-lang]").forEach(function (b) {
+      b.textContent = H.lang === "tl" ? "English" : "Taglish";
+      b.setAttribute("lang", H.lang === "tl" ? "en" : "fil");
+      b.setAttribute("aria-label", H.lang === "tl" ? "Switch to English" : "Lipat sa Taglish");
+      b.addEventListener("click", function () { H.setLang(H.lang === "tl" ? "en" : "tl"); });
+    });
+    if (H.lang !== "tl") return;
+    document.documentElement.lang = "fil";
+    document.querySelectorAll("[data-t]").forEach(function (el) {
+      var k = el.getAttribute("data-t") || el.textContent.replace(/\s+/g, " ").trim(), v = H.t(k);
+      if (v !== k) el.textContent = v;
+    });
+    ["placeholder", "aria-label", "alt"].forEach(function (a) {
+      document.querySelectorAll("[data-t-" + a + "]").forEach(function (el) { el.setAttribute(a, H.t(el.getAttribute(a))); });
+    });
+    document.title = H.t(document.title);
   };
   /* weather line in the visitor's units: "Dry, 31° / 23°C" */
   H.wxLine = function (w, withRain) {
     var f = function (c) { return H.us ? Math.round(c * 9 / 5 + 32) : Math.round(c); };
-    var s = w.text + ", " + f(w.hi) + "° / " + f(w.lo) + (H.us ? "°F" : "°C");
-    if (withRain && w.rain >= 1) s += ", " + (H.us ? (w.rain / 25.4).toFixed(1) + " in" : Math.round(w.rain) + " mm") + " of rain";
+    var s = H.t(w.text) + ", " + f(w.hi) + "° / " + f(w.lo) + (H.us ? "°F" : "°C");
+    if (withRain && w.rain >= 1) s += ", " + H.t("{x} of rain", { x: H.us ? (w.rain / 25.4).toFixed(1) + " in" : Math.round(w.rain) + " mm" });
     return s;
   };
   H.keyFor = function (id) { var m = H.store.get("homeday:keys") || {}; return m[id] || null; };
@@ -88,12 +115,13 @@
   H.dow = function (d) { return fDow.format(d); };
   H.span = function (a, b) {
     var d = H.diff(a, b);
-    if (d < 14) return d + (d === 1 ? " day" : " days");
-    if (d < 84) return Math.round(d / 7) + " weeks";
+    if (d < 14) return H.t(d === 1 ? "{n} day" : "{n} days", { n: d });
+    if (d < 84) return H.t("{n} weeks", { n: Math.round(d / 7) });
     var y = H.yearsBetween(a, b);
-    if (y < 1) return Math.round(d / 30.44) + " months";
+    if (y < 1) return H.t("{n} months", { n: Math.round(d / 30.44) });
     var mo = Math.floor(H.diff(H.addYears(a, y), b) / 30.44);
-    return y + (y === 1 ? " year" : " years") + (mo ? " and " + mo + (mo === 1 ? " month" : " months") : "");
+    var ys = H.t(y === 1 ? "{n} year" : "{n} years", { n: y });
+    return mo ? H.t("{years} and {months}", { years: ys, months: H.t(mo === 1 ? "{n} month" : "{n} months", { n: mo }) }) : ys;
   };
 
   /* ---------- moon ---------- */
@@ -214,35 +242,35 @@
     var days = H.diff(s.home, end), photos = s.photos || [];
     var ev = [], p = H.moonPhase(s.home);
     var homeBody = "<p>" + (s.birth && H.diff(s.birth, s.home) > 0
-      ? n + " was " + H.span(s.birth, s.home) + " old on the day " + (past ? "your life together began." : "everything changed.")
-      : "The first day of your life together.") + "</p>" +
+      ? H.t(past ? "{n} was {age} old on the day your life together began." : "{n} was {age} old on the day everything changed.", { n: n, age: H.span(s.birth, s.home) })
+      : H.t("The first day of your life together.")) + "</p>" +
       '<ul class="facts">' +
-      '<li>' + H.moonSvg(p) + '<span><span class="k">Moon that night</span>' + H.moonName(p) + "</span></li>" +
-      '<li class="live" data-live="weather"><span><span class="k">Weather' + (s.city ? " in " + H.esc(s.city) : "") + '</span><span class="v">' + (s.city ? "Looking it up…" : "Add a city to see it") + "</span></span></li>" +
-      '<li class="live" data-live="song"><span><span class="k">Number one in the US</span><span class="v">Looking it up…</span></span></li>' +
+      '<li>' + H.moonSvg(p) + '<span><span class="k">' + H.t("Moon that night") + '</span>' + H.moonName(p) + "</span></li>" +
+      '<li class="live" data-live="weather"><span><span class="k">' + (s.city ? H.t("Weather in {city}", { city: H.esc(s.city) }) : H.t("Weather")) + '</span><span class="v">' + H.t(s.city ? "Looking it up…" : "Add a city to see it") + "</span></span></li>" +
+      '<li class="live" data-live="song"><span><span class="k">' + H.t("Number one in the US") + '</span><span class="v">' + H.t("Looking it up…") + '</span></span></li>' +
       "</ul>";
-    if (s.birth && H.diff(s.birth, s.home) > 0) ev.push({ d: s.birth, h: stop(s.birth, n + " was born", "<p>Before you knew each other.</p>") });
-    ev.push({ d: s.home, h: stop(s.home, "The day " + n + " came home", homeBody) });
+    if (s.birth && H.diff(s.birth, s.home) > 0) ev.push({ d: s.birth, h: stop(s.birth, H.t("{n} was born", { n: n }), "<p>" + H.t("Before you knew each other.") + "</p>") });
+    ev.push({ d: s.home, h: stop(s.home, H.t("The day {n} came home", { n: n }), homeBody) });
     ev.push({ d: H.addDays(s.home, 0.5), photo: true });
     [[7, "First week home", "Seven days in. The house already worked differently."],
      [100, "100 days together", "Long enough to have routines neither of you agreed to."],
      [1000, "1,000 days together", "A thousand mornings."]].forEach(function (m) {
-      ev.push({ d: H.addDays(s.home, m[0]), h: stop(H.addDays(s.home, m[0]), m[1], "<p>" + m[2] + "</p>") });
+      ev.push({ d: H.addDays(s.home, m[0]), h: stop(H.addDays(s.home, m[0]), H.t(m[1]), "<p>" + H.t(m[2]) + "</p>") });
     });
     var yrs = H.yearsBetween(s.home, end), shown = [1, 2, 3, 5, 10, 15, 20];
     for (var y = 1; y <= yrs; y++) {
       if (shown.indexOf(y) < 0 && y !== yrs) continue;
       var ad = H.addYears(s.home, y), age = s.birth ? H.yearsBetween(s.birth, ad) : null;
-      ev.push({ d: ad, h: stop(ad, y === 1 ? "First homeday" : y + " years home", "<p>" + (y === 1 ? "One full year since " + n + " came home." : "Homeday number " + y + ".") + (age !== null && age > 0 ? " " + n + " was " + age + "." : "") + "</p>") });
+      ev.push({ d: ad, h: stop(ad, y === 1 ? H.t("First homeday") : H.t("{y} years home", { y: y }), "<p>" + (y === 1 ? H.t("One full year since {n} came home.", { n: n }) : H.t("Homeday number {y}.", { y: y })) + (age !== null && age > 0 ? " " + H.t("{n} was {age}.", { n: n, age: age }) : "") + "</p>") });
     }
     var topK = Math.floor(days / 1000) * 1000;
-    if (topK > 1000) ev.push({ d: H.addDays(s.home, topK), h: stop(H.addDays(s.home, topK), H.num(topK) + " days together", "<p>Another thousand, mostly ordinary, which is the point.</p>") });
+    if (topK > 1000) ev.push({ d: H.addDays(s.home, topK), h: stop(H.addDays(s.home, topK), H.t("{k} days together", { k: H.num(topK) }), "<p>" + H.t("Another thousand, mostly ordinary, which is the point.") + "</p>") });
     ev = ev.filter(function (e) { return e.d <= end; }).sort(function (a, b) { return a.d - b.d; });
 
     var html = "", used = 0, rows = Math.ceil(photos.length / 3), slots = Math.max(1, ev.length - 1), row = 0;
     ev.forEach(function (e, i) {
       if (e.photo) {
-        if (!photos.length && showEmptyPhotos) html += '<li class="stop pics"><div class="when"></div><div class="what"><div class="frames"><div class="frame empty">Your photos<br>go here</div><div class="frame empty" style="--r:1.8deg">Add them in<br>the form above</div></div></div></li>';
+        if (!photos.length && showEmptyPhotos) html += '<li class="stop pics"><div class="when"></div><div class="what"><div class="frames"><div class="frame empty">' + H.t("Your photos<br>go here") + '</div><div class="frame empty" style="--r:1.8deg">' + H.t("Add them in<br>the form above") + '</div></div></div></li>';
         return;
       }
       html += e.h;
@@ -253,18 +281,18 @@
     var bit = "";
     if (s.birth) {
       var ay = H.diff(s.birth, end) / 365.25, hy = H.humanYears(s.kind, ay);
-      bit = n + (past ? " lived " : " is ") + H.span(s.birth, end) + (past ? "" : " old") + (hy !== null && ay >= 0.5 ? ", about " + hy + " in human years by the usual rule of thumb" : "") + ".";
+      bit = H.t(past ? "{n} lived {age}" : "{n} is {age} old", { n: n, age: H.span(s.birth, end) }) + (hy !== null && ay >= 0.5 ? H.t(", about {hy} in human years by the usual rule of thumb", { hy: hy }) : "") + ".";
     }
-    var facts = '<ul class="facts"><li><span><span class="k">Weekends together</span>' + H.num(Math.floor(days / 7)) + "</span></li>" +
-      (s.kind === "dog" ? '<li><span><span class="k">Walks, at two a day</span>about ' + H.num(days * 2) + "</span></li>" : "") +
-      '<li><span><span class="k">Homedays celebrated</span>' + yrs + "</span></li></ul>";
+    var facts = '<ul class="facts"><li><span><span class="k">' + H.t("Weekends together") + '</span>' + H.num(Math.floor(days / 7)) + "</span></li>" +
+      (s.kind === "dog" ? '<li><span><span class="k">' + H.t("Walks, at two a day") + '</span>' + H.t("about {x}", { x: H.num(days * 2) }) + "</span></li>" : "") +
+      '<li><span><span class="k">' + H.t("Homedays celebrated") + '</span>' + yrs + "</span></li></ul>";
     if (past) {
-      html += stop(end, "The day you said goodbye", "<p>" + bit + " You were together for " + H.num(days) + " days.</p>" + facts, "now");
+      html += stop(end, H.t("The day you said goodbye"), "<p>" + bit + " " + H.t("You were together for {d} days.", { d: H.num(days) }) + "</p>" + facts, "now");
     } else {
-      html += stop(end, "Today", "<p>" + (bit ? bit + " " : "") + "Day " + H.num(days) + " with you.</p>" + facts, "now");
+      html += stop(end, H.t("Today"), "<p>" + (bit ? bit + " " : "") + H.t("Day {d} with you.", { d: H.num(days) }) + "</p>" + facts, "now");
       var nextA = H.addYears(s.home, yrs + 1), nextK = H.addDays(s.home, (Math.floor(days / 1000) + 1) * 1000);
-      [{ d: nextA, h: stop(nextA, yrs + 1 === 1 ? "First homeday" : "Homeday number " + (yrs + 1), "<p>In " + H.num(H.diff(t, nextA)) + " days. Worth a treat.</p>", "ahead") },
-       { d: nextK, h: stop(nextK, "Day " + H.num(H.diff(s.home, nextK)), "<p>In " + H.num(H.diff(t, nextK)) + " days.</p>", "ahead") }]
+      [{ d: nextA, h: stop(nextA, yrs + 1 === 1 ? H.t("First homeday") : H.t("Homeday number {y}", { y: yrs + 1 }), "<p>" + H.t("In {d} days. Worth a treat.", { d: H.num(H.diff(t, nextA)) }) + "</p>", "ahead") },
+       { d: nextK, h: stop(nextK, H.t("Day {d}", { d: H.num(H.diff(s.home, nextK)) }), "<p>" + H.t("In {d} days.", { d: H.num(H.diff(t, nextK)) }) + "</p>", "ahead") }]
         .sort(function (a, b) { return a.d - b.d; }).forEach(function (x) { html += x.h; });
     }
     return { html: html, days: days, years: yrs, end: end };
@@ -278,17 +306,17 @@
       if (token !== liveToken) return;
       var el = root.querySelector('[data-live="' + kind + '"] .v'); if (el) el.textContent = text;
     }
-    H.songFor(s.home).then(function (x) { put("song", x ? "“" + x.title + "”, " + x.artist : "The chart started in 1958"); }, function () { put("song", "Unavailable right now"); });
+    H.songFor(s.home).then(function (x) { put("song", x ? "“" + x.title + "”, " + x.artist : H.t("The chart started in 1958")); }, function () { put("song", H.t("Unavailable right now")); });
     if (!s.city) return Promise.resolve(null);
     var c = coords && coords.lat != null ? Promise.resolve(coords) : H.geocodeSoon(s.city);
     return c.then(function (g) {
-      if (!g) { put("weather", "We couldn't find that city"); return null; }
-      if (s.home < new Date(Date.UTC(1981, 0, 1))) { put("weather", "Records start in 1981"); return g; }
+      if (!g) { put("weather", H.t("We couldn't find that city")); return null; }
+      if (s.home < new Date(Date.UTC(1981, 0, 1))) { put("weather", H.t("Records start in 1981")); return g; }
       return H.weatherOn(g.lat, g.lon, s.home).then(function (w) {
-        put("weather", w ? H.wxLine(w, true) : "No record for that day yet");
+        put("weather", w ? H.wxLine(w, true) : H.t("No record for that day yet"));
         return g;
       });
-    }).catch(function () { put("weather", "Unavailable right now"); return null; });
+    }).catch(function () { put("weather", H.t("Unavailable right now")); return null; });
   };
 
   /* ---------- poster art: the walk together, one dot per year ---------- */
@@ -310,4 +338,5 @@
   };
 
   global.Homeday = H;
+  H.translatePage();
 })(window);

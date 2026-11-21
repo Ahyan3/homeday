@@ -13,17 +13,17 @@
 <body class="ks-body">
 <header class="wrap top noprint">
   <a class="mark" href="/">Homeday</a>
-  <nav aria-label="Timeline"><a id="back-link" href="/">Back to the timeline</a></nav>
+  <nav aria-label="Timeline"><a id="back-link" href="/" data-t>Back to the timeline</a><button type="button" class="langswitch" data-lang>Taglish</button></nav>
 </header>
 
 <main class="wrap ks">
   <div class="ks-bar noprint">
     <div class="stack">
-      <h1 class="ks-title" id="ks-title">Your keepsake</h1>
-      <p id="ks-lead">Loading…</p>
+      <h1 class="ks-title" id="ks-title" data-t>Your keepsake</h1>
+      <p id="ks-lead" data-t>Loading…</p>
     </div>
     <div class="ks-actions">
-      <button class="btn" type="button" id="print-btn" hidden>Print or save as PDF</button>
+      <button class="btn" type="button" id="print-btn" hidden data-t>Print or save as PDF</button>
       <button class="btn" type="button" id="buy-btn" hidden>Buy the keepsake, ₱699</button>
     </div>
   </div>
@@ -64,6 +64,7 @@
     <span>Homeday is run by Ryan Francis Romano in the Philippines. <a href="mailto:ahyanromano02@gmail.com">ahyanromano02@gmail.com</a></span>
   </div>
 </footer>
+<script src="/assets/tl.js"></script>
 <script src="/assets/core.js"></script>
 <script src="/assets/manual.js"></script>
 <script src="/assets/keepsake.js"></script>

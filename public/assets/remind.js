@@ -16,7 +16,7 @@
   function showFor(row, emails) {
     if (!row || !row.owner || row.memorial) return;
     form.hidden = false;
-    if (emails && emails.length) $("remind-note").textContent = "Reminders go to " + emails.join(", ") + ". One email a year; every email has a link to stop them.";
+    if (emails && emails.length) $("remind-note").textContent = H.t("Reminders go to {emails}. One email a year; every email has a link to stop them.", { emails: emails.join(", ") });
   }
 
   var k = key();
@@ -28,19 +28,19 @@
   form.addEventListener("submit", function (ev) {
     ev.preventDefault();
     var email = $("remind-email").value.trim(), note = $("remind-note"), btn = $("remind-btn");
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { note.textContent = "Enter an email address, like you@example.com."; $("remind-email").focus(); return; }
-    btn.disabled = true; note.textContent = "Saving…";
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { note.textContent = H.t("Enter an email address, like you@example.com."); $("remind-email").focus(); return; }
+    btn.disabled = true; note.textContent = H.t("Saving…");
     H.rpc("add_reminder", { p_id: id, p_key: key(), p_email: email }).then(function (res) {
       btn.disabled = false; $("remind-email").value = "";
       var next = res && res.next ? fmt.format(H.parse(res.next)) : null;
-      note.textContent = "Done. We'll email " + email + " a week before " + (next ? next : "each homeday") + ".";
+      note.textContent = H.t(next ? "Done. We'll email {email} a week before {date}." : "Done. We'll email {email} a week before each homeday.", { email: email, date: next });
     }).catch(function (e) {
       btn.disabled = false;
       var msg = String(e && e.message || "");
-      note.textContent = /too many/.test(msg) ? "This timeline already sends reminders to 5 addresses."
+      note.textContent = H.t(/too many/.test(msg) ? "This timeline already sends reminders to 5 addresses."
         : /bad email/.test(msg) ? "That email address doesn't look right. Check it and try again."
         : /not owner/.test(msg) ? "Only the person with the edit link can turn on reminders."
-        : "That didn't save. Check your connection and try again.";
+        : "That didn't save. Check your connection and try again.");
     });
   });
 })();

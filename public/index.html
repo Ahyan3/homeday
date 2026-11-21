@@ -24,10 +24,11 @@
 <header class="wrap top">
   <a class="mark" href="/">Homeday</a>
   <nav aria-label="Sections">
-    <a class="only-make" href="#timeline">Example</a>
-    <a class="only-make" href="#memorial">Memorials</a>
-    <a href="#keepsakes">Keepsakes</a>
-    <a class="only-view" href="/">Make your own</a>
+    <a class="only-make" href="#timeline" data-t>Example</a>
+    <a class="only-make" href="#memorial" data-t>Memorials</a>
+    <a href="#keepsakes" data-t>Keepsakes</a>
+    <a class="only-view" href="/" data-t>Make your own</a>
+    <button type="button" class="langswitch" data-lang>Taglish</button>
   </nav>
 </header>
 <div class="collar" aria-hidden="true"><div class="holes"><i></i><i></i><i></i><i></i></div></div>
@@ -36,87 +37,87 @@
 <div class="wrap hero">
   <div class="pitch">
     <div class="only-make pitch-copy">
-      <h1 id="hero-title">Every day since they came home.</h1>
-      <p class="lead">Tell us the day your pet came home. Homeday lays out your whole life together: the weather and the moon that day, the song at number one, and every milestone since.</p>
+      <h1 id="hero-title" data-t>Every day since they came home.</h1>
+      <p class="lead" data-t>Tell us the day your pet came home. Homeday lays out your whole life together: the weather and the moon that day, the song at number one, and every milestone since.</p>
     </div>
     <div class="only-view pitch-copy">
       <h1 id="view-title"></h1>
       <p class="lead" id="view-lead"></p>
       <div class="owner-bar" id="owner-bar" hidden>
-        <a class="btn quiet" id="edit-link" href="/">Edit timeline</a>
-        <button class="btn" type="button" id="open-share">Share</button>
+        <a class="btn quiet" id="edit-link" href="/" data-t>Edit timeline</a>
+        <button class="btn" type="button" id="open-share" data-t>Share</button>
       </div>
       <div class="share" id="share" hidden>
         <div class="share-row">
-          <label for="share-url">Link for friends and family</label>
-          <div class="copyline"><input type="text" id="share-url" readonly><button type="button" class="btn quiet" data-copy="share-url">Copy link</button></div>
-          <p class="small sharevia">Send it on
+          <label for="share-url" data-t>Link for friends and family</label>
+          <div class="copyline"><input type="text" id="share-url" readonly><button type="button" class="btn quiet" data-copy="share-url" data-t>Copy link</button></div>
+          <p class="small sharevia"><span data-t>Send it on</span>
             <a id="sh-wa" href="#" target="_blank" rel="noopener">WhatsApp</a>,
             <a id="sh-fb" href="#" target="_blank" rel="noopener">Facebook</a>,
-            <a id="sh-x" href="#" target="_blank" rel="noopener">X</a> or
-            <a id="sh-mail" href="#">email</a>.</p>
+            <a id="sh-x" href="#" target="_blank" rel="noopener">X</a> <span data-t>or</span>
+            <a id="sh-mail" href="#" data-t>email</a>.</p>
         </div>
         <div class="share-row">
-          <label for="edit-url">Your private edit link</label>
-          <div class="copyline"><input type="text" id="edit-url" readonly><button type="button" class="btn quiet" data-copy="edit-url">Copy link</button></div>
-          <p class="small">Anyone with this link can change the timeline, so keep it to yourself. This browser remembers it too.</p>
+          <label for="edit-url" data-t>Your private edit link</label>
+          <div class="copyline"><input type="text" id="edit-url" readonly><button type="button" class="btn quiet" data-copy="edit-url" data-t>Copy link</button></div>
+          <p class="small" data-t>Anyone with this link can change the timeline, so keep it to yourself. This browser remembers it too.</p>
         </div>
         <form class="share-row remind" id="remind-form" novalidate hidden>
-          <label for="remind-email">Email me a week before each homeday</label>
-          <div class="copyline"><input type="email" id="remind-email" autocomplete="email" inputmode="email" placeholder="you@example.com" maxlength="254"><button class="btn quiet" type="submit" id="remind-btn">Remind me</button></div>
-          <p class="small" id="remind-note" role="status">One email a year. Every email has a link to stop them.</p>
+          <label for="remind-email" data-t>Email me a week before each homeday</label>
+          <div class="copyline"><input type="email" id="remind-email" autocomplete="email" inputmode="email" placeholder="you@example.com" maxlength="254"><button class="btn quiet" type="submit" id="remind-btn" data-t>Remind me</button></div>
+          <p class="small" id="remind-note" role="status" data-t>One email a year. Every email has a link to stop them.</p>
         </form>
       </div>
     </div>
 
     <form class="make only-make" id="make" novalidate>
       <div class="f">
-        <label for="pet-name">Their name</label>
+        <label for="pet-name" data-t>Their name</label>
         <input type="text" id="pet-name" maxlength="24" autocomplete="off" value="Biko">
       </div>
       <div class="f">
-        <label for="pet-kind">They are a</label>
+        <label for="pet-kind" data-t>They are a</label>
         <select id="pet-kind">
-          <option value="dog" selected>Dog</option>
-          <option value="cat">Cat</option>
-          <option value="rabbit">Rabbit</option>
-          <option value="bird">Bird</option>
-          <option value="pet">Something else</option>
+          <option value="dog" selected data-t>Dog</option>
+          <option value="cat" data-t>Cat</option>
+          <option value="rabbit" data-t>Rabbit</option>
+          <option value="bird" data-t>Bird</option>
+          <option value="pet" data-t>Something else</option>
         </select>
       </div>
       <div class="f">
-        <label for="home-date">The day they came home</label>
+        <label for="home-date" data-t>The day they came home</label>
         <input type="date" id="home-date" value="2019-03-16">
       </div>
       <div class="f">
-        <label for="birth-date">Their birthday <span class="opt">(a guess is fine)</span></label>
+        <label for="birth-date"><span data-t>Their birthday</span> <span class="opt" data-t>(a guess is fine)</span></label>
         <input type="date" id="birth-date" value="2018-12-02">
       </div>
       <div class="f wide">
-        <label for="home-city">The town or city they came home to <span class="opt">(for the weather)</span></label>
+        <label for="home-city"><span data-t>The town or city they came home to</span> <span class="opt" data-t>(for the weather)</span></label>
         <input type="text" id="home-city" maxlength="60" autocomplete="off" value="Quezon City">
       </div>
       <div class="f wide">
         <span class="filebtn">
           <label for="photos" style="display:contents">
             <input type="file" id="photos" accept="image/jpeg,image/png,image/webp,image/heic" multiple>
-            <span class="b">Add photos</span>
+            <span class="b" data-t>Add photos</span>
           </label>
-          <span class="small" id="photo-count">Up to 12. Saved only if you save the timeline.</span>
+          <span class="small" id="photo-count" data-t>Up to 12. Saved only if you save the timeline.</span>
         </span>
       </div>
       <div class="f wide check">
         <input type="checkbox" id="is-memorial">
-        <label for="is-memorial">They have passed away, and this is in their memory</label>
+        <label for="is-memorial" data-t>They have passed away, and this is in their memory</label>
       </div>
       <div class="f wide" id="passed-field" hidden>
-        <label for="passed-date">The day you said goodbye</label>
+        <label for="passed-date" data-t>The day you said goodbye</label>
         <input type="date" id="passed-date">
       </div>
       <p class="err f wide" id="form-error" role="alert"></p>
       <div class="f wide actions">
-        <button class="btn" type="submit" id="make-btn">Make the timeline</button>
-        <span class="small" id="make-note">Free. No account.</span>
+        <button class="btn" type="submit" id="make-btn" data-t>Make the timeline</button>
+        <span class="small" id="make-note" data-t>Free. No account.</span>
       </div>
     </form>
   </div>
@@ -137,30 +138,30 @@
 <section class="story" id="timeline" aria-labelledby="story-title">
   <div class="wrap">
     <div class="storyhead">
-      <span class="example only-make" id="example-chip">Example timeline. Change the form above to make yours.</span>
+      <span class="example only-make" id="example-chip" data-t>Example timeline. Change the form above to make yours.</span>
       <h2 id="story-title" tabindex="-1"></h2>
       <div class="count" id="story-count"></div>
       <div class="savebar only-make" id="savebar" hidden>
-        <button class="btn" type="button" id="save-btn">Save and get a link</button>
-        <span class="small" id="save-status" role="status">Saving gives you a page to share, with a guestbook for friends.</span>
+        <button class="btn" type="button" id="save-btn" data-t>Save and get a link</button>
+        <span class="small" id="save-status" role="status" data-t>Saving gives you a page to share, with a guestbook for friends.</span>
       </div>
     </div>
     <ol class="walk" id="walk"></ol>
     <p class="closing" id="closing" hidden></p>
-    <p class="small credit">Weather from NASA POWER. Places from OpenStreetMap. Songs from the Billboard Hot 100.</p>
+    <p class="small credit" data-t>Weather from NASA POWER. Places from OpenStreetMap. Songs from the Billboard Hot 100.</p>
   </div>
 </section>
 
 <section class="band only-view guest" id="guestbook" aria-labelledby="gb-title">
   <div class="wrap two">
     <div class="stack">
-      <h2 id="gb-title">Guestbook</h2>
+      <h2 id="gb-title" data-t>Guestbook</h2>
       <p id="gb-intro">Leave a few words for the family. Everyone who has this link can read them.</p>
       <form class="gbform" id="gb-form" novalidate>
-        <div class="f"><label for="gb-name">Your name</label><input type="text" id="gb-name" maxlength="40" autocomplete="name"></div>
-        <div class="f"><label for="gb-msg">Your message</label><textarea id="gb-msg" maxlength="500" rows="4"></textarea></div>
+        <div class="f"><label for="gb-name" data-t>Your name</label><input type="text" id="gb-name" maxlength="40" autocomplete="name"></div>
+        <div class="f"><label for="gb-msg" data-t>Your message</label><textarea id="gb-msg" maxlength="500" rows="4"></textarea></div>
         <p class="err" id="gb-error" role="alert"></p>
-        <div><button class="btn" type="submit" id="gb-btn">Sign the guestbook</button></div>
+        <div><button class="btn" type="submit" id="gb-btn" data-t>Sign the guestbook</button></div>
       </form>
     </div>
     <div class="stack">
@@ -171,11 +172,11 @@
 
 <section class="band only-make">
   <div class="wrap">
-    <h2>Three minutes, start to finish</h2>
+    <h2 data-t>Three minutes, start to finish</h2>
     <ol class="steps">
-      <li><h3>Give us one date</h3><p>The day they came home is all it takes. A birthday, a city and a few photos make it richer.</p></li>
-      <li><h3>Save it and share it</h3><p>Your timeline gets its own link, with a guestbook where friends can leave a message.</p></li>
-      <li><h3>Keep it, if you want</h3><p>The timeline is free. A print or a book costs money, and nobody will chase you about it.</p></li>
+      <li><h3 data-t>Give us one date</h3><p data-t>The day they came home is all it takes. A birthday, a city and a few photos make it richer.</p></li>
+      <li><h3 data-t>Save it and share it</h3><p data-t>Your timeline gets its own link, with a guestbook where friends can leave a message.</p></li>
+      <li><h3 data-t>Keep it, if you want</h3><p data-t>The timeline is free. A keepsake costs money, and nobody will chase you about it.</p></li>
     </ol>
   </div>
 </section>
@@ -183,16 +184,16 @@
 <section class="band memorial only-make" id="memorial">
   <div class="wrap two">
     <div class="stack">
-      <h2>For the ones who are gone</h2>
-      <p>A memorial timeline is quieter. It ends on the day you said goodbye, counts the days you had, and leaves out everything about what comes next. Friends can sign its guestbook.</p>
-      <div><button class="btn quiet" type="button" id="start-memorial">Make a memorial timeline</button></div>
+      <h2 data-t>For the ones who are gone</h2>
+      <p data-t>A memorial timeline is quieter. It ends on the day you said goodbye, counts the days you had, and leaves out everything about what comes next. Friends can sign its guestbook.</p>
+      <div><button class="btn quiet" type="button" id="start-memorial" data-t>Make a memorial timeline</button></div>
     </div>
     <div class="stack">
-      <h3>What we promise</h3>
+      <h3 data-t>What we promise</h3>
       <ul>
-        <li>No countdown timers, no discounts that expire, no reminder emails about a pet you lost.</li>
-        <li>The memorial timeline and its guestbook are free, the same as every other timeline.</li>
-        <li>You can make one for a grieving friend and send them the edit link to finish it.</li>
+        <li data-t>No countdown timers, no discounts that expire, no reminder emails about a pet you lost.</li>
+        <li data-t>The memorial timeline and its guestbook are free, the same as every other timeline.</li>
+        <li data-t>You can make one for a grieving friend and send them the edit link to finish it.</li>
       </ul>
     </div>
   </div>
@@ -202,27 +203,27 @@
   <div class="wrap two">
     <div class="stack">
       <div class="poster" id="poster" aria-label="Preview of the printed poster">
-        <span class="proof">Preview</span>
+        <span class="proof" data-t>Preview</span>
         <div class="pn" id="poster-name"></div>
         <svg id="poster-art" viewBox="0 0 300 250" preserveAspectRatio="xMidYMid meet" aria-hidden="true"></svg>
         <div class="pf"><span id="poster-left"></span><span id="poster-right" style="text-align:right"></span></div>
       </div>
-      <p class="small" style="margin-top:22px">The poster draws your walk together, one dot for each year.</p>
+      <p class="small" style="margin-top:22px" data-t>The poster draws your walk together, one dot for each year.</p>
     </div>
     <div class="stack">
-      <h2>Keepsakes made from your timeline</h2>
-      <p id="pay-ways">Made from the timeline above. Pay with GCash, Maya, QR Ph or card through PayMongo.</p>
+      <h2 data-t>Keepsakes made from your timeline</h2>
+      <p id="pay-ways" data-t>Made from the timeline above. Pay with GCash, Maya, QR Ph or card through PayMongo.</p>
       <div class="prices">
-        <div class="price"><h3>Digital keepsake</h3><span class="amt" data-price="digital">₱699</span><p>A printable poster and certificate, ready in a minute. Print them anywhere.</p><button type="button" data-item="digital">Buy</button></div>
+        <div class="price"><h3 data-t>Digital keepsake</h3><span class="amt" data-price="digital">₱699</span><p data-t>A printable poster and certificate, ready in a minute. Print them anywhere.</p><button type="button" data-item="digital" data-t>Buy</button></div>
         <!-- Prints and books are off at launch. To sell them, remove "hidden" from these two rows and set PRINTS_ENABLED=1. -->
         <div class="price" hidden><h3>Framed print</h3><span class="amt" data-price="print">₱2,999</span><p>The poster on heavy matte paper, framed and delivered anywhere in the Philippines.</p><button type="button" data-item="print">Buy</button></div>
         <div class="price" hidden><h3>Memory book</h3><span class="amt" data-price="book">₱3,999</span><p>A hardcover book of the timeline with all your photos, delivered anywhere in the Philippines.</p><button type="button" data-item="book">Buy</button></div>
-        <div class="price"><h3>Give it as a gift</h3><span class="amt" data-price="gift">₱699</span><p>Pay for the digital keepsake on a friend's timeline. They get the poster and certificate.</p><button type="button" data-item="gift">Buy</button></div>
+        <div class="price"><h3 data-t>Give it as a gift</h3><span class="amt" data-price="gift">₱699</span><p data-t>Pay for the digital keepsake on a friend's timeline. They get the poster and certificate.</p><button type="button" data-item="gift" data-t>Buy</button></div>
       </div>
       <p class="small" id="charge-note" hidden></p>
-      <div class="cur-switch small" role="group" aria-label="Show prices in">Show prices in
-        <button type="button" data-cur="PHP">Philippine pesos</button>
-        <button type="button" data-cur="USD">US dollars</button>
+      <div class="cur-switch small" role="group" aria-label="Show prices in" data-t-aria-label><span data-t>Show prices in</span>
+        <button type="button" data-cur="PHP" data-t>Philippine pesos</button>
+        <button type="button" data-cur="USD" data-t>US dollars</button>
       </div>
       <div id="manual-pay" hidden></div>
       <form class="shipform" id="ship-form" hidden novalidate>
@@ -238,16 +239,16 @@
         <div class="actions wide"><button class="btn" type="submit" id="ship-go">Continue to payment</button><button class="btn quiet" type="button" id="ship-cancel">Cancel</button></div>
       </form>
       <p class="notice" id="checkout-note" role="status"></p>
-      <p id="keepsake-ready" hidden><a class="btn" id="keepsake-link" href="/">Open your keepsake</a></p>
+      <p id="keepsake-ready" hidden><a class="btn" id="keepsake-link" href="/" data-t>Open your keepsake</a></p>
     </div>
   </div>
 </section>
 
 <section class="band only-view">
   <div class="wrap stack">
-    <h2>Make one for your own pet</h2>
-    <p>It takes one date and about three minutes. It's free.</p>
-    <div><a class="btn" href="/">Make a timeline</a></div>
+    <h2 data-t>Make one for your own pet</h2>
+    <p data-t>It takes one date and about three minutes. It's free.</p>
+    <div><a class="btn" href="/" data-t>Make a timeline</a></div>
   </div>
 </section>
 </main>
@@ -255,11 +256,12 @@
 <footer>
   <div class="wrap small">
     <nav class="foot-links" aria-label="Help and policies"><a href="/help">Help</a><a href="/terms">Terms</a><a href="/privacy">Privacy</a><a href="/refunds">Refunds</a><a href="/security">Security</a></nav>
-    <span>Homeday. Timelines are public to anyone with their link and are never listed or sold.</span>
+    <span data-t>Homeday. Timelines are public to anyone with their link and are never listed or sold.</span>
     <span>Weather: <a href="https://power.larc.nasa.gov/">NASA POWER</a>. Places: © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>.</span>
   </div>
 </footer>
 
+<script src="/assets/tl.js"></script>
 <script src="/assets/core.js"></script>
 <script src="/assets/app.js"></script>
 <script src="/assets/remind.js"></script>

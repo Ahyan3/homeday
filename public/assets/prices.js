@@ -6,11 +6,11 @@
   function show(cur) { document.querySelectorAll("[data-price]").forEach(function (el) { el.textContent = H.price(el.getAttribute("data-price"), cur); }); }
   show(H.cur);
   var ways = $("pay-ways"), sw = document.querySelector(".cur-switch");
-  if (ways && H.cur === "USD") ways.textContent = "Made from the timeline above. Pay by Visa or Mastercard through PayMongo, our payment provider.";
+  if (ways && H.cur === "USD") ways.textContent = H.t("Made from the timeline above. Pay by Visa or Mastercard through PayMongo, our payment provider.");
   H.payMode().then(function (mode) {
     if (mode !== "manual") return;
     show("PHP");
-    if (ways) ways.textContent = "Made from the timeline above. Pay with GCash, Maya, GoTyme or your bank's app by scanning our QR code.";
+    if (ways) ways.textContent = H.t("Made from the timeline above. Pay with GCash, Maya, GoTyme or your bank's app by scanning our QR code.");
     if (sw) sw.hidden = true;
   });
   H.chargeNote("digital").then(function (t) { var n = $("charge-note"); if (n) { n.textContent = t; n.hidden = !t; } });

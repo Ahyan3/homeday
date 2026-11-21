@@ -116,6 +116,12 @@ Visitors outside the Philippines already see US$12. Until this is switched on, t
 
 Orders store their currency, and a payment only unlocks a keepsake if its currency and amount match the order.
 
+## Change or add Taglish text
+
+All Taglish lives in `public/assets/tl.js`, keyed by the exact English it replaces. In scripts, text is wrapped as `H.t("English with {placeholders}", { placeholders })`; in pages, an element with `data-t` gets its text swapped. When you change English text, change its key in `tl.js` too, or that line will show in English. `npm test` fails if a simple `H.t("...")` has no Taglish or if a translation's `{placeholders}` don't match.
+
+The help and policy pages, the printed poster and certificate, and the emails stay in English.
+
 ## Change the owner details
 
 The name and contact email appear on the help, terms, privacy, refunds and security pages, in their footers, in `public/keepsake.html`, `thanks.html`, `404.html` and `unsubscribe.html`, and in `public/.well-known/security.txt`. Search the `public/` folder for the old email and replace it everywhere.

@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.5.0: 21 November 2026
+
+### Added
+- Taglish version of the site: home, timeline, sharing, guestbook, reminders, keepsake page and QR payments. A switch in the header changes language and is remembered; browsers set to Filipino start in Taglish.
+- Test that every translation keeps its placeholders and that simple `H.t()` calls have a translation.
+
+### Changed
+- On phones the header keeps the language switch visible.
+- The home page says "A keepsake costs money" instead of mentioning prints and books, which aren't on sale yet.
+
 ## 1.4.0: 21 November 2026
 
 ### Added
