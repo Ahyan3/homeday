@@ -33,6 +33,7 @@ Storage bucket `photos` is public for reading by URL. Anyone may upload JPEG, PN
 | `unsubscribe_reminder(token)` | Browser | Stops reminders from the link in an email |
 | `submit_manual_payment(id, item, name, email, ref, wallet?)` | Browser | Records a QR code payment to check, and which QR (GCash, Maya or GoTyme) it was paid to. Each reference number once; 5 an hour per timeline, 60 an hour site-wide |
 | `manual_pending(id)` | Browser | Whether a GCash/Maya payment for a timeline is waiting to be checked |
+| `backup_export(key)` | Weekly backup job | Every timeline, guestbook message, order, reminder and photo path, for the encrypted weekly backup. Needs the backup key, stored only as a hash |
 | `admin_orders(key)` / `admin_review(key, order, ok)` | Admin page | Lists payments to check, and confirms or rejects one. Need the admin key, stored only as a hash |
 
 The functions that take `secret` refuse to run unless it matches `app_secrets.webhook`. That value lives only in the database and in the host's `HOMEDAY_DB_SECRET`.
@@ -53,6 +54,7 @@ Run in order from `supabase/migrations/`:
 8. `20261121023054_manual_payments.sql`: GCash/Maya payments checked by hand, and the admin functions
 9. `20261121023121_order_emails_plain.sql`: order emails without the reminder footer
 10. `20261121024226_manual_payment_wallet.sql`: which QR code (GCash, Maya or GoTyme) a payment went to
+11. `20261121024916_backup_export.sql`: the export the weekly backup uses
 
 After running them, set the admin key: see [operations](operations.md#take-qr-code-payments-by-hand).
 

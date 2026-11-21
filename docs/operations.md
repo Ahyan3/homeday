@@ -64,6 +64,30 @@ Change all three, then deploy:
 - `public/assets/core.js`, `H.PRICES`: what visitors see, in pesos and in dollars
 - The fallback text in `public/index.html` and `public/keepsake.html`, shown for a moment before the scripts load
 
+## Weekly backup
+
+Supabase's free plan keeps no backups, so the **Weekly backup** job in `.github/workflows/backup.yml` does it. Every Sunday at 10:17 am Philippine time it copies every timeline, guestbook message, order and reminder, plus every photo, encrypts them and keeps the file for 90 days. Website secrets and the song chart aren't included: the secrets live in your password manager, and the chart comes from `supabase/seed/`.
+
+**Set up once** (2 minutes, on a computer or in your phone's browser):
+
+1. On GitHub, open the repo, then **Settings > Secrets and variables > Actions > New repository secret**.
+2. Add `HOMEDAY_BACKUP_KEY` (unlocks the data; its hash is in the database) and `HOMEDAY_BACKUP_PASSPHRASE` (encrypts the file). Keep both in your password manager too: without the passphrase, a backup can't be opened.
+3. Open **Actions > Weekly backup > Run workflow** to take the first backup now. It should finish green, with a file under **Artifacts**.
+
+If a run fails, GitHub emails you. The run's log shows how many timelines, orders and photos it saved.
+
+**Change the backup key:** make a long random key, save it as the `HOMEDAY_BACKUP_KEY` secret, and in the Supabase SQL editor run
+`update public.app_secrets set value = encode(extensions.digest('YOUR-NEW-KEY', 'sha256'), 'hex') where name = 'backup_key_hash';`
+
+## Restore from a backup
+
+1. On GitHub, open **Actions > Weekly backup**, pick a run, and download its file under **Artifacts**. Unzip it.
+2. Decrypt and unpack it (you'll be asked for the passphrase):
+   `gpg -d homeday-backup-2026-11-22.tar.gz.gpg | tar -xz`
+3. Turn it into SQL: `node scripts/backup-to-sql.mjs backup/backup.json > restore.sql`
+4. Run `restore.sql` in the Supabase SQL editor. It only adds rows that are missing, so it's safe on a database that lost some data, and safe to run twice. For a brand-new database, run the migrations and the song seed first (see [deployment](deployment.md)).
+5. Put the photos back: in Supabase, open **Storage > photos** and upload the `u` folder from `backup/photos/`, keeping its folder names.
+
 ## Take QR code payments by hand
 
 Until PayMongo is live, buyers can pay by scanning your GCash, Maya or GoTyme QR code. All three are QR Ph codes, so any Philippine bank or e-wallet app can pay them, and buyers say which one they used. They send the reference number from their receipt, and you confirm it on the admin page. Confirming unlocks their keepsake and, once Resend is set up, emails them the link. When `PAYMONGO_SECRET_KEY` is set, the site switches to PayMongo checkout by itself.

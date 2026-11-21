@@ -16,6 +16,7 @@ Live: [homeday-eight.vercel.app](https://homeday-eight.vercel.app) · Moving to 
 - **Keepsakes.** A printable poster and certificate, unlocked after payment. Prints and books are built but switched off at launch.
 - **Homeday reminders.** Owners can ask for one email a year, a week before each homeday, with a link back to the timeline and the keepsake. Never for memorials. Sent from the database, so it works on any host.
 - **Pay by QR code.** Before PayMongo is live, buyers pay your GCash, Maya or GoTyme QR code and send the reference number; you confirm it on `/admin` and the keepsake unlocks. Switches to PayMongo by itself once its key is set.
+- **Weekly encrypted backup.** A GitHub job copies the database and every photo each Sunday, encrypts them and keeps them for 90 days; `scripts/backup-to-sql.mjs` turns a backup back into the database.
 - **Works for visitors abroad.** Visitors outside the Philippines see prices in US dollars and can switch; US visitors also get Fahrenheit and US-style dates. Dollar charging switches on with one setting once PayMongo enables it.
 - **Help and policies.** Help, terms, privacy (Philippine Data Privacy Act), refunds and security pages, plus `security.txt`.
 - **Security.** Strict content security policy and security headers on both hosts, fonts served from the site, no third-party scripts.
@@ -64,6 +65,8 @@ functions/            Cloudflare routes, three lines each, pointing into lib/
 api/                  Vercel routes, the same for Vercel
 supabase/migrations/  Database schema and functions, in order
 supabase/seed/        Loads the Billboard number ones
+scripts/              backup-to-sql.mjs: turns a backup into restore SQL
+.github/workflows/    Tests on every push, daily keep-awake, weekly backup
 tests/                Server tests (node:test, no dependencies)
 docs/                 Deployment, database and day-to-day operations
 ```

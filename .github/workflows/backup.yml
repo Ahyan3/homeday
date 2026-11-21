@@ -1,0 +1,73 @@
+name: Weekly backup
+
+# Every Sunday at 10:17 am Philippine time: copies the database and every photo, encrypts them with
+# HOMEDAY_BACKUP_PASSPHRASE, and keeps the file for 90 days under this run's Artifacts.
+# Restore steps: docs/operations.md, "Restore from a backup".
+on:
+  schedule:
+    - cron: "17 2 * * 0"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: backup
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      SUPABASE_URL: https://qvdeqzdgyloqyyiqnbrh.supabase.co
+      # The public "anon" key, the same one the website uses. The backup key below is what unlocks the data.
+      SUPABASE_ANON: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF2ZGVxemRneWxvcXl5aXFuYnJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTUxNzI5OTAsImV4cCI6MjExMDc0ODk5MH0.hE1M5lCSydmP6uogb7GdNRvHs9N0eGnZ0zhF1c31lq4
+      BACKUP_KEY: ${{ secrets.HOMEDAY_BACKUP_KEY }}
+      BACKUP_PASSPHRASE: ${{ secrets.HOMEDAY_BACKUP_PASSPHRASE }}
+    steps:
+      - name: Check the secrets are set
+        run: |
+          if [ -z "$BACKUP_KEY" ] || [ -z "$BACKUP_PASSPHRASE" ]; then
+            echo "::error::Add HOMEDAY_BACKUP_KEY and HOMEDAY_BACKUP_PASSPHRASE under Settings > Secrets and variables > Actions."
+            exit 1
+          fi
+
+      - name: Copy the database and photos
+        run: |
+          set -euo pipefail
+          umask 077
+          mkdir -p backup/photos
+          jq -n --arg k "$BACKUP_KEY" '{p_key: $k}' > key.json
+          curl -sS --fail-with-body -X POST "$SUPABASE_URL/rest/v1/rpc/backup_export" \
+            -H "apikey: $SUPABASE_ANON" -H "Authorization: Bearer $SUPABASE_ANON" \
+            -H "Content-Type: application/json" --data @key.json -o backup/backup.json
+          rm -f key.json
+          jq -e '.format == 1' backup/backup.json > /dev/null
+          jq -r '.photos[]' backup/backup.json | while IFS= read -r p; do
+            if [[ ! "$p" =~ ^u/[a-z0-9]+/[a-z0-9]+\.(jpg|png|webp)$ ]]; then echo "::warning::Skipped an unexpected photo path"; continue; fi
+            mkdir -p "backup/photos/$(dirname "$p")"
+            curl -sS --fail --retry 3 "$SUPABASE_URL/storage/v1/object/public/photos/$p" -o "backup/photos/$p"
+          done
+          echo "Timelines: $(jq '.tables.timelines | length' backup/backup.json)"
+          echo "Orders: $(jq '.tables.orders | length' backup/backup.json)"
+          echo "Photos: $(find backup/photos -type f | wc -l) of $(jq '.photos | length' backup/backup.json)"
+
+      - name: Encrypt
+        run: |
+          set -euo pipefail
+          umask 077
+          printf '%s' "$BACKUP_PASSPHRASE" > pass.txt
+          tar -czf - backup | gpg --batch --yes --pinentry-mode loopback --passphrase-file pass.txt \
+            --symmetric --cipher-algo AES256 -o "homeday-backup-$(date -u +%Y-%m-%d).tar.gz.gpg"
+          rm -rf backup pass.txt
+          ls -la homeday-backup-*.gpg
+
+      - name: Keep it for 90 days
+        uses: actions/upload-artifact@v4
+        with:
+          name: homeday-backup-${{ github.run_number }}
+          path: homeday-backup-*.tar.gz.gpg
+          retention-days: 90
+          if-no-files-found: error
+          compression-level: 0

@@ -51,6 +51,10 @@ Then open **Deployments** and click **Retry deployment** on the latest one, so t
 
 Supabase's free plan pauses a database after 7 days without activity. The **Keep database awake** workflow in `.github/workflows/keepalive.yml` makes one small request every day at 11:17 am Philippine time. In GitHub, open **Actions**, enable workflows if asked, and run it once by hand to check it works.
 
+## 6b. Turn on the weekly backup
+
+Add the two backup secrets on GitHub and run the job once. See [operations](operations.md#weekly-backup).
+
 ## 7. Retire Vercel
 
 Vercel's free Hobby plan is for non-commercial use only, so once Cloudflare works, delete or pause the Vercel project.

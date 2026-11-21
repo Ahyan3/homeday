@@ -10,6 +10,7 @@ import { handleWeather } from "../lib/weather.js";
 import { handleGeocode } from "../lib/geocode.js";
 import { hmacHex, safeEqual, SECURITY_HEADERS } from "../lib/shared.js";
 import { readFileSync } from "node:fs";
+import { backupToSql } from "../scripts/backup-to-sql.mjs";
 
 const env = { PAYMONGO_SECRET_KEY: "sk_test_x", HOMEDAY_DB_SECRET: "db-secret", PAYMONGO_WEBHOOK_SECRET: "whsk_test" };
 let calls = [];
@@ -175,4 +176,23 @@ test("security headers are the same on Vercel, Cloudflare and in the shared code
   const cf = readFileSync(new URL("../public/_headers", import.meta.url), "utf8");
   for (const [k, v] of Object.entries(SECURITY_HEADERS)) assert.ok(cf.includes(`  ${k}: ${v}\n`), `_headers is missing ${k}`);
   assert.match(SECURITY_HEADERS["Content-Security-Policy"], /script-src 'self';/);
+});
+
+test("a backup turns into restore SQL that keeps ids and survives tricky text", () => {
+  const backup = { format: 1, taken_at: "2026-11-22T02:17:00Z", tables: {
+    timelines: [{ id: "abcd2345", name: "O'Malley $$ $hd$ \\ \"Biko\"" }],
+    guestbook: [{ id: 7, timeline_id: "abcd2345", author: "Ana", message: "Happy homeday!" }],
+    orders: [], reminders: [] }, photos: [] };
+  const sql = backupToSql(backup);
+  assert.match(sql, /^-- Homeday restore, from the backup taken 2026-11-22T02:17:00Z\nbegin;/);
+  assert.match(sql, /commit;\n$/);
+  assert.ok(sql.indexOf("public.timelines") < sql.indexOf("public.guestbook"), "parents first");
+  assert.match(sql, /insert into public\.guestbook overriding system value select \* from jsonb_populate_recordset/);
+  assert.doesNotMatch(sql, /insert into public\.timelines overriding/);
+  assert.match(sql, /setval\(pg_get_serial_sequence\('public\.reminders', 'id'\)/);
+  // the JSON between the dollar-quote tags is exactly the original rows
+  const m = sql.match(/null::public\.timelines, \$(hd[0-9a-f]+)\$(.*)\$\1\$::jsonb/);
+  assert.ok(m, "timelines statement found");
+  assert.deepEqual(JSON.parse(m[2]), backup.tables.timelines);
+  assert.throws(() => backupToSql({ format: 2 }), /isn't a Homeday backup/);
 });

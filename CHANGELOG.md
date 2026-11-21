@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.4.0: 21 November 2026
+
+### Added
+- Weekly encrypted backup: every Sunday a GitHub job copies all timelines, guestbook messages, orders, reminders and photos, encrypts them with a passphrase and keeps them for 90 days.
+- `backup_export` database function, locked behind a backup key stored only as a hash.
+- `scripts/backup-to-sql.mjs` and restore steps in `docs/operations.md`. Restores keep original ids and only add missing rows.
+
 ## 1.3.1: 21 November 2026
 
 ### Changed
