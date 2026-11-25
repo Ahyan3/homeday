@@ -64,7 +64,7 @@
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { err.textContent = H.t(ERR["bad email"]); H.$("mp-email").focus(); return; }
       if (!/^[A-Za-z0-9]{8,30}$/.test(ref.replace(/[\s-]/g, ""))) { err.textContent = H.t(ERR["bad reference"]); H.$("mp-ref").focus(); return; }
       err.textContent = ""; btn.disabled = true; btn.textContent = H.t("Sending…");
-      H.rpc("submit_manual_payment", { p_id: id, p_item: item, p_name: name, p_email: email, p_ref: ref, p_wallet: chosen.id }).then(function () {
+      H.rpc("submit_manual_payment", { p_id: id, p_item: item, p_name: name, p_email: email, p_ref: ref, p_wallet: chosen.id, p_variant: H.variant }).then(function () {
         H.store.set("homeday:last", id);
         box.innerHTML = "";
         var done = el("h3", { tabindex: "-1" }, H.t("Thank you. We're checking your payment."));

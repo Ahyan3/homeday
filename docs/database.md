@@ -38,6 +38,9 @@ Storage bucket `photos` is public for reading by URL. Anyone may upload JPEG, PN
 | `send_feedback(message, email?, page, lang)` | Browser | Saves a message from the feedback box; 60 an hour site-wide |
 | `hit(event, page, region, lang)` | Browser | Adds 1 to a daily counter. Unknown values are ignored |
 | `admin_inbox(key)` / `admin_gallery(key, id, show)` / `admin_feedback_delete(key, id)` | Admin page | Gallery requests, approving or removing, and feedback |
+| `add_guestbook(id, author, message, hp?)` | Browser | Saves a guestbook message. Refuses links, the same message more than 3 times a day, and more than 30 an hour per timeline or 300 site-wide; a filled-in trap field is silently dropped |
+| `site_flags()` / `price_for(item, group)` | Browser and checkout | Whether the price test is on, and what a price group pays (₱399 for group b only while it's on) |
+| `admin_price_test(key)` / `admin_set_price_test(key, on)` | Admin page | Price test results per group, and the start/stop switch |
 | `admin_stats(key)` | Admin page | The last 14 days of visitors, saves, buy taps and payments, plus all-time totals |
 | `backup_export(key)` | Weekly backup job | Every timeline, guestbook message, order, reminder and photo path, for the encrypted weekly backup. Needs the backup key, stored only as a hash |
 | `admin_orders(key)` / `admin_review(key, order, ok)` | Admin page | Lists payments to check, and confirms or rejects one. Need the admin key, stored only as a hash |
@@ -63,6 +66,8 @@ Run in order from `supabase/migrations/`:
 11. `20261121024916_backup_export.sql`: the export the weekly backup uses
 12. `20261121030528_gallery_and_feedback.sql`: the home page gallery (owner offers, owner of the site approves) and the feedback box
 13. `20261125034136_visitor_counts.sql`: daily visitor counts, with nothing that identifies a visitor
+14. `20261125044901_guestbook_spam_rules.sql`: guestbook spam rules (no links, no repeats, hourly caps, hidden trap)
+15. `20261125045032_price_test.sql`: the ₱399 vs ₱699 price test
 
 After running them, set the admin key: see [operations](operations.md#take-qr-code-payments-by-hand).
 

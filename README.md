@@ -21,6 +21,8 @@ Live: [homeday-eight.vercel.app](https://homeday-eight.vercel.app) · Moving to 
 - **Gallery of real timelines.** Owners can offer their timeline for the home page; it shows after the site owner approves it on `/admin`, and comes down any time.
 - **Visitor numbers without tracking.** Daily totals only (visitors, saves, buy taps, payments), shown on `/admin`. No cookies, no IP addresses, Do Not Track respected.
 - **Feedback box** in the footer, read on `/admin`.
+- **Price test.** Start a ₱399 vs ₱699 test from `/admin`; results show earnings per visitor for each price.
+- **Guestbook spam protection** in the database: no links, no repeats, hourly caps and a hidden bot trap.
 - **Works for visitors abroad.** Visitors outside the Philippines see prices in US dollars and can switch; US visitors also get Fahrenheit and US-style dates. Dollar charging switches on with one setting once PayMongo enables it.
 - **Help and policies.** Help, terms, privacy (Philippine Data Privacy Act), refunds and security pages, plus `security.txt`.
 - **Security.** Strict content security policy and security headers on both hosts, fonts served from the site, no third-party scripts.

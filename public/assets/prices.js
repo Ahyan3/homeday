@@ -8,6 +8,7 @@
   var ways = $("pay-ways"), sw = document.querySelector(".cur-switch");
   if (ways && H.cur === "USD") ways.textContent = H.t("Made from the timeline above. Pay by Visa or Mastercard through PayMongo, our payment provider.");
   H.payMode().then(function (mode) {
+    show(H.cur);  /* again, now that we know whether the price test is running */
     if (mode !== "manual") return;
     show("PHP");
     if (ways) ways.textContent = H.t("Made from the timeline above. Pay with GCash, Maya, GoTyme or your bank's app by scanning our QR code.");

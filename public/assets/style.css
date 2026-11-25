@@ -326,3 +326,6 @@ body.paid .wm { display: none; }
 .fb-form { display: grid; gap: 12px; max-width: 520px; }
 .fb-form textarea, .fb-form input { font: inherit; color: var(--ink); background: #fff; border: 1.5px solid var(--moss); border-radius: 8px; padding: 10px 12px; width: 100%; }
 .linklike { font: inherit; background: none; border: 0; padding: 0; color: var(--ink); text-decoration: underline; cursor: pointer; }
+
+/* hidden trap field for spam bots */
+.hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }

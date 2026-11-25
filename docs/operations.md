@@ -73,6 +73,16 @@ Open `/admin` on your phone (paste the admin key once). From top to bottom:
 - **Visitors, last 14 days:** visitors (one per browser per day), how many were abroad or used Taglish, timelines saved, buy taps and paid keepsakes. Counts are daily totals only: no cookies, no IP addresses, and browsers set to Do Not Track aren't counted.
 - **Feedback:** messages from the "Send feedback" box in the footer, with the sender's email if they gave one.
 
+## The price test
+
+On `/admin`, **Price test: ₱699 or ₱399** starts and stops the test (two taps). While it runs, half of visitors in the Philippines see the digital keepsake and gift at ₱399; each browser keeps its group, and visitors abroad keep US$12. The database decides what's charged, so nobody gets ₱399 while the test is off, and stopping it puts everyone back on ₱699.
+
+Read the **Earned per visitor** column: the higher one wins. Wait for about 300 visitors in each group first. When you've decided, stop the test; to make ₱399 the price for everyone, change the prices as described in "Change prices" below and in `price_for` in the database.
+
+## Guestbook spam
+
+The database refuses guestbook messages with links, the same message more than 3 times in a day, and more than 30 messages an hour on one timeline or 300 across the site. A hidden field catches bots that fill in every box, and a message sent within 2.5 seconds of the page opening is treated the same way. Owners can still hide any message from their timeline.
+
 ## Weekly backup
 
 Supabase's free plan keeps no backups, so the **Weekly backup** job in `.github/workflows/backup.yml` does it. Every Sunday at 10:17 am Philippine time it copies every timeline, guestbook message, order and reminder, plus every photo, encrypts them and keeps the file for 90 days. Website secrets and the song chart aren't included: the secrets live in your password manager, and the chart comes from `supabase/seed/`.

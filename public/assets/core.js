@@ -27,7 +27,20 @@
   H.setCur = function (c) { if (c === "PHP" || c === "USD") { H.store.set("homeday:cur", c); location.reload(); } };
   /* Shown prices. Charged prices live in lib/shared.js; keep them the same. */
   H.PRICES = { PHP: { digital: "₱699", gift: "₱699", print: "₱2,999", book: "₱3,999" }, USD: { digital: "US$12", gift: "US$12" } };
-  H.price = function (item, cur) { var t = H.PRICES[cur || H.cur]; return (t && t[item]) || H.PRICES.PHP[item]; };
+  /* Price test: while the owner runs it (switched on /admin), half of browsers see the digital keepsake
+     and gift at ₱399. Each browser keeps its group. The database decides what's actually charged. */
+  H.variant = (function () { var v = H.store.get("homeday:pv"); if (v !== "a" && v !== "b") { v = Math.random() < 0.5 ? "a" : "b"; H.store.set("homeday:pv", v); } return v; })();
+  H.testOn = H.store.get("homeday:pt") === true;
+  var flags = null;
+  H.flags = function () {
+    if (!flags) flags = H.rpc("site_flags", {}).then(function (f) { H.testOn = !!(f && f.price_test); H.store.set("homeday:pt", H.testOn); return f || {}; }, function () { return {}; });
+    return flags;
+  };
+  H.price = function (item, cur) {
+    cur = cur || H.cur;
+    if (cur === "PHP" && H.testOn && H.variant === "b" && (item === "digital" || item === "gift")) return "₱399";
+    var t = H.PRICES[cur]; return (t && t[item]) || H.PRICES.PHP[item];
+  };
   /* How people pay. "card" = PayMongo checkout. "manual" = QR code (GCash, Maya or GoTyme), checked by
      hand, used until PayMongo is live. "off" = neither. All three are QR Ph codes, so any Philippine
      bank or e-wallet app can pay any of them; the buyer just tells us which one they used. */
@@ -45,10 +58,10 @@
     if (!payInfo) payInfo = fetch("/api/checkout").then(function (r) { return r.ok ? r.json() : {}; }).catch(function () { return {}; });
     return payInfo;
   };
-  H.payMode = function () { return H.payInfo().then(function (j) { return j.card ? "card" : H.MANUAL_PAY.on ? "manual" : "off"; }); };
+  H.payMode = function () { return H.flags().then(H.payInfo).then(function (j) { return j.card ? "card" : H.MANUAL_PAY.on ? "manual" : "off"; }); };
   /* the line under the prices that says how this visitor will pay */
   H.chargeNote = function (item) {
-    return H.payInfo().then(function (j) {
+    return H.flags().then(H.payInfo).then(function (j) {
       if (!j.card && H.MANUAL_PAY.on) {
         return H.t("Pay {price} by scanning our QR code with GCash, Maya, GoTyme or your bank's app. We check each payment by hand, usually within a few hours.", { price: H.price(item, "PHP") })
           + (H.inPH ? "" : " " + H.t("This needs a Philippine bank or e-wallet account; card payments from abroad open soon."));
@@ -349,7 +362,7 @@
       fetch(SB + "/rest/v1/rpc/hit", {
         method: "POST", keepalive: true,
         headers: { apikey: ANON, Authorization: "Bearer " + ANON, "Content-Type": "application/json" },
-        body: JSON.stringify({ p_event: event, p_page: H.pageKind, p_region: H.inPH ? "PH" : "abroad", p_lang: H.lang })
+        body: JSON.stringify({ p_event: event, p_page: H.pageKind, p_region: H.inPH ? "PH" : "abroad", p_lang: H.lang, p_variant: H.variant })
       }).catch(function () { /* counting must never break the page */ });
     } catch (e) { /* old browser */ }
   };

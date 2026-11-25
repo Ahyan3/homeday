@@ -1,5 +1,6 @@
 (function () {
   "use strict";
+  var OPENED = Date.now();
   var H = window.Homeday, $ = H.$;
   var mode = "make";          /* make | edit | view */
   var current = null;         /* saved timeline when editing or viewing */
@@ -142,7 +143,7 @@
     };
     var card = function (id) {
       note.textContent = H.t("Opening checkout…");
-      return fetch("/api/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ timeline_id: id, item: item, shipping: shipping, currency: H.cur }) })
+      return fetch("/api/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ timeline_id: id, item: item, shipping: shipping, currency: H.cur, variant: H.variant }) })
         .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok || !j.url) throw new Error(j.error || H.t("Checkout didn't open. Try again in a minute.")); return j.url; }); })
         .then(function (url) { H.store.set("homeday:last", id); location.href = url; });
     };
@@ -297,12 +298,19 @@
     var name = $("gb-name").value.trim(), msg = $("gb-msg").value.trim(), err = $("gb-error");
     if (!name) { err.textContent = H.t("Enter your name."); $("gb-name").focus(); return; }
     if (!msg) { err.textContent = H.t("Write a message first."); $("gb-msg").focus(); return; }
+    if (/(https?:\/\/|www\.)/i.test(msg)) { err.textContent = H.t("Messages can't include links."); $("gb-msg").focus(); return; }
+    /* bots fill the hidden "website" field, or submit within a moment of the page opening */
+    var hp = $("gb-site").value || (Date.now() - OPENED < 2500 ? "too-fast" : "");
     err.textContent = ""; $("gb-btn").disabled = true;
-    H.rpc("add_guestbook", { p_id: current.id, p_author: name, p_message: msg }).then(function () {
+    H.rpc("add_guestbook", { p_id: current.id, p_author: name, p_message: msg, p_hp: hp || null }).then(function () {
       $("gb-msg").value = ""; $("gb-btn").disabled = false; loadGuestbook();
     }).catch(function (e) {
       $("gb-btn").disabled = false;
-      err.textContent = H.t(/busy/.test(e.message) ? "This guestbook has had a lot of messages in the last hour. Try again later." : "Your message wasn't saved. Check your connection and try again.");
+      var m = String(e && e.message || "");
+      err.textContent = H.t(/links/.test(m) ? "Messages can't include links."
+        : /duplicate/.test(m) ? "That exact message was already posted. Write something of your own."
+        : /busy/.test(m) ? "This guestbook has had a lot of messages in the last hour. Try again later."
+        : "Your message wasn't saved. Check your connection and try again.");
     });
   });
   $("gb-list").addEventListener("click", function (ev) {

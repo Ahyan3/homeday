@@ -7,6 +7,7 @@
   if (!id) { $("ks-lead").textContent = H.t("This link is missing the timeline. Open the keepsake from your timeline page."); return; }
   $("back-link").href = "/t/" + id;
   $("buy-btn").textContent = H.t("Buy the keepsake, {price}", { price: H.price("digital") });
+  H.flags().then(function () { $("buy-btn").textContent = H.t("Buy the keepsake, {price}", { price: H.price("digital") }); });
 
   function draw() {
     var end = s.memorial ? s.passed : H.today(), days = H.diff(s.home, end), yrs = H.yearsBetween(s.home, end), len = s.name.length;
@@ -72,7 +73,7 @@
   });
   function card(b) {
     b.disabled = true; $("ks-note").textContent = H.t("Opening checkout…");
-    fetch("/api/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ timeline_id: id, item: "digital", currency: H.cur }) })
+    fetch("/api/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ timeline_id: id, item: "digital", currency: H.cur, variant: H.variant }) })
       .then(function (r) { return r.json().then(function (j) { if (!r.ok || !j.url) throw new Error(j.error || H.t("Checkout didn't open. Try again in a minute.")); return j.url; }); })
       .then(function (url) { H.store.set("homeday:last", id); location.href = url; })
       .catch(function (e) { b.disabled = false; $("ks-note").textContent = e.message; });

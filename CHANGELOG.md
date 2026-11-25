@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.7.0: 25 November 2026
+
+### Added
+- Price test: from `/admin`, start a test where half of visitors in the Philippines see ₱399 instead of ₱699 for the digital keepsake and gift. The database decides what's charged; results show visitors, payments and earnings per visitor for each price. Off until started.
+- Guestbook spam protection in the database: no links, no message repeated more than 3 times a day, 30 an hour per timeline and 300 site-wide, plus a hidden trap field and a too-fast check.
+
+### Changed
+- Terms and privacy mention price tests.
+
 ## 1.6.0: 25 November 2026
 
 ### Added

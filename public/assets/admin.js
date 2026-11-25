@@ -106,6 +106,22 @@
     }).join("");
     $("adm-stats").innerHTML = head + "<tbody>" + body + "</tbody>";
   }
+  function priceTest(r) {
+    if (!r || !r.variants) return;
+    var peso = function (c) { return "₱" + H.num(Math.round(c / 100)); };
+    $("adm-pt-lead").textContent = r.on
+      ? "Running since " + new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long", timeZone: "Asia/Manila" }).format(new Date(r.started_at)) + ". Half of visitors see ₱399."
+      : "Off. Everyone sees ₱699.";
+    var rows = r.variants.map(function (v) {
+      var perVisitor = v.visitors ? peso(v.revenue_centavos / v.visitors) : "–";
+      return "<tr><th scope=\"row\">" + peso(v.price) + "</th><td><b>" + perVisitor + "</b></td><td>" + H.num(v.visitors) + "</td><td>" + H.num(v.paid) + "</td><td>" + peso(v.revenue_centavos) + "</td><td>" + H.num(v.buy_clicks) + "</td><td>" + H.num(v.orders) + "</td></tr>";
+    }).join("");
+    $("adm-pt").innerHTML = "<thead><tr><th scope=\"col\">Price</th><th scope=\"col\">Earned per visitor</th><th scope=\"col\">Visitors</th><th scope=\"col\">Paid</th><th scope=\"col\">Earned</th><th scope=\"col\">Buy taps</th><th scope=\"col\">Payments sent</th></tr></thead><tbody>" + rows + "</tbody>";
+    var acts = $("adm-pt-acts"); acts.innerHTML = "";
+    acts.appendChild(r.on
+      ? twoTap("Stop the test", "Tap again to stop", "btn quiet", function () { return H.rpc("admin_set_price_test", { p_key: key, p_on: false }); })
+      : twoTap("Start the test", "Tap again to start", "btn", function () { return H.rpc("admin_set_price_test", { p_key: key, p_on: true }); }));
+  }
   function load() {
     $("adm-lead").textContent = "Loading…";
     return H.rpc("admin_orders", { p_key: key }).then(function (r) {
@@ -118,7 +134,7 @@
         ? r.pending.length + (r.pending.length === 1 ? " payment" : " payments") + " to check. Open the app it was paid to, find the reference number in your transactions, and check the amount is ₱699."
         : "Nothing to check. New payments appear here.";
       if (!r.recent.length) d.innerHTML = '<li class="small">None yet.</li>';
-      return Promise.all([H.rpc("admin_inbox", { p_key: key }).then(inbox), H.rpc("admin_stats", { p_key: key }).then(stats)]);
+      return Promise.all([H.rpc("admin_inbox", { p_key: key }).then(inbox), H.rpc("admin_stats", { p_key: key }).then(stats), H.rpc("admin_price_test", { p_key: key }).then(priceTest)]);
     });
   }
   $("adm-login").addEventListener("submit", function (ev) {

@@ -23,6 +23,7 @@ beforeEach(() => {
     calls.push({ url, opts, body: opts.body ? JSON.parse(opts.body) : null });
     if (url.includes("/rpc/get_timeline")) return reply({ id: "abcd2345", name: "Mochi" });
     if (url.includes("/rpc/create_order")) return reply(true);
+    if (url.includes("/rpc/price_for")) return reply(globalThis.__testPrice ?? 69900);
     if (url.includes("/rpc/mark_order_paid")) return reply("paid");
     if (url.includes("capabilities/payment_methods")) return reply(["gcash", "paymaya", "qrph", "card"]);
     if (url.includes("checkout_sessions")) return reply({ data: { attributes: { checkout_url: "https://checkout.paymongo.com/cs_1" } } });
@@ -214,4 +215,23 @@ test("every Taglish phrase keeps its placeholders, and simple H.t() calls have a
       assert.ok(TL[key], `${f}: no Taglish for "${key}"`);
     }
   }
+});
+
+test("price test: group b pays what the database says, group a and prints never change", async () => {
+  globalThis.__testPrice = 39900;
+  await handleCheckout(checkoutRequest({ timeline_id: "abcd2345", item: "digital", variant: "b" }), env);
+  let attrs = calls.find((c) => c.url.includes("checkout_sessions")).body.data.attributes;
+  assert.equal(attrs.line_items[0].amount, 39900);
+  assert.equal(calls.find((c) => c.url.includes("create_order")).body.p.amount, 39900);
+  calls = [];
+  await handleCheckout(checkoutRequest({ timeline_id: "abcd2345", item: "digital", variant: "a" }), env);
+  attrs = calls.find((c) => c.url.includes("checkout_sessions")).body.data.attributes;
+  assert.equal(attrs.line_items[0].amount, 69900);
+  assert.ok(!calls.some((c) => c.url.includes("price_for")), "group a doesn't need to ask");
+  // test switched off: the database answers 69900 and that's what's charged
+  globalThis.__testPrice = 69900; calls = [];
+  await handleCheckout(checkoutRequest({ timeline_id: "abcd2345", item: "digital", variant: "b" }), env);
+  attrs = calls.find((c) => c.url.includes("checkout_sessions")).body.data.attributes;
+  assert.equal(attrs.line_items[0].amount, 69900);
+  delete globalThis.__testPrice;
 });
