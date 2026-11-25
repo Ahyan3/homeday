@@ -132,7 +132,7 @@
   function checkout(item, shipping) {
     if (paying) return;
     var note = $("checkout-note");
-    paying = true; priceButtons(false);
+    paying = true; priceButtons(false); H.hit("buy_click");
     var go = function (id) {
       return H.payMode().then(function (mode) {
         if (mode === "manual") { note.textContent = ""; paying = false; priceButtons(true); H.openManual(id, item, $("manual-pay")); return; }
@@ -282,6 +282,7 @@
   });
   document.querySelectorAll(".price button").forEach(function (b) { b.addEventListener("click", function () { buy(b.dataset.item); }); });
   $("open-share").addEventListener("click", function () {
+    if ($("share").hidden) H.hit("share_open");
     var open = $("share").hidden; $("share").hidden = !open; this.textContent = H.t(open ? "Hide sharing" : "Share");
   });
   document.querySelectorAll("[data-copy]").forEach(function (b) {

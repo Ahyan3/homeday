@@ -337,6 +337,28 @@
       memorial: !!r.memorial, passed: H.parse(r.passed_date), photos: r.photos || [], lat: r.lat, lon: r.lon, paid: !!r.paid, owner: !!r.owner };
   };
 
+  /* ---------- visitor numbers ----------
+     Adds 1 to a daily counter in the database: what happened, which kind of page, Philippines or abroad,
+     and the language. Nothing identifies the visitor. "visitor" is counted once a day per browser, using
+     only today's date kept in this browser. Skipped on /admin and when the browser asks not to be tracked. */
+  var NOTRACK = /^\/admin/.test(location.pathname) || navigator.doNotTrack === "1" || navigator.globalPrivacyControl === true;
+  H.pageKind = location.pathname === "/" ? "home" : /^\/t\//.test(location.pathname) ? "timeline" : /^\/keepsake/.test(location.pathname) ? "keepsake" : "other";
+  H.hit = function (event) {
+    if (NOTRACK) return;
+    try {
+      fetch(SB + "/rest/v1/rpc/hit", {
+        method: "POST", keepalive: true,
+        headers: { apikey: ANON, Authorization: "Bearer " + ANON, "Content-Type": "application/json" },
+        body: JSON.stringify({ p_event: event, p_page: H.pageKind, p_region: H.inPH ? "PH" : "abroad", p_lang: H.lang })
+      }).catch(function () { /* counting must never break the page */ });
+    } catch (e) { /* old browser */ }
+  };
+
   global.Homeday = H;
   H.translatePage();
+  (function () {
+    var today = H.iso(H.today());
+    if (H.store.get("homeday:seen") !== today) { H.store.set("homeday:seen", today); H.hit("visitor"); }
+    H.hit("view");
+  })();
 })(window);

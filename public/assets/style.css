@@ -309,3 +309,20 @@ body.paid .wm { display: none; }
 /* language switch in the header */
 .langswitch { font: inherit; font-family: var(--display); font-size: .92rem; color: var(--ink); background: transparent; border: 1.5px solid var(--ink); border-radius: 999px; padding: 3px 12px; cursor: pointer; }
 .langswitch:hover, .langswitch:focus-visible { background: var(--felt); }
+
+/* gallery of real timelines: photos hang like the timeline's frames; no photo shows a brass tag */
+.gal { list-style: none; margin: 8px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 28px 22px; }
+.gal-card { display: grid; gap: 6px; justify-items: center; text-align: center; text-decoration: none; color: var(--ink); }
+.gal-pic { width: 100%; aspect-ratio: 1; background: #fff; padding: 8px 8px 22px; box-shadow: 0 1px 0 var(--ink), 0 6px 14px rgba(20, 48, 42, .18); transform: rotate(var(--r, 0deg)); transition: transform .2s ease; }
+.gal-pic img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.gal-pic.gal-tag { width: 72%; padding: 0; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #d8b878, var(--brass) 60%, #8a6c37); display: grid; place-items: center; font-family: var(--display); font-weight: 800; font-size: 2.6rem; color: #3b2c12; box-shadow: inset 0 0 0 3px rgba(255,255,255,.25), 0 6px 14px rgba(20, 48, 42, .18); }
+.gal-card b { font-family: var(--display); font-size: 1.15rem; margin-top: 6px; }
+.gal-card span { font-size: .95rem; color: var(--moss); }
+.gal-card:hover .gal-pic, .gal-card:focus-visible .gal-pic { transform: rotate(0deg) translateY(-3px); }
+@media (prefers-reduced-motion: reduce) { .gal-pic { transition: none; } }
+.gallery-row .lbl { font-family: var(--display); font-weight: 600; }
+/* feedback box in the footer */
+.fb { display: grid; gap: 10px; justify-items: start; flex-basis: 100%; order: 9; margin-top: 4px; }
+.fb-form { display: grid; gap: 12px; max-width: 520px; }
+.fb-form textarea, .fb-form input { font: inherit; color: var(--ink); background: #fff; border: 1.5px solid var(--moss); border-radius: 8px; padding: 10px 12px; width: 100%; }
+.linklike { font: inherit; background: none; border: 0; padding: 0; color: var(--ink); text-decoration: underline; cursor: pointer; }

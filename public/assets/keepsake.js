@@ -62,7 +62,7 @@
   }
   $("print-btn").addEventListener("click", function () { window.print(); });
   $("buy-btn").addEventListener("click", function () {
-    var b = $("buy-btn"); b.disabled = true;
+    var b = $("buy-btn"); b.disabled = true; H.hit("buy_click");
     H.payMode().then(function (mode) {
       b.disabled = false;
       if (mode === "manual") { H.openManual(id, "digital", $("ks-manual")); return; }

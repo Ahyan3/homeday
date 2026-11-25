@@ -33,6 +33,12 @@ Storage bucket `photos` is public for reading by URL. Anyone may upload JPEG, PN
 | `unsubscribe_reminder(token)` | Browser | Stops reminders from the link in an email |
 | `submit_manual_payment(id, item, name, email, ref, wallet?)` | Browser | Records a QR code payment to check, and which QR (GCash, Maya or GoTyme) it was paid to. Each reference number once; 5 an hour per timeline, 60 an hour site-wide |
 | `manual_pending(id)` | Browser | Whether a GCash/Maya payment for a timeline is waiting to be checked |
+| `gallery_status(id, key)` / `set_gallery(id, key, on)` | Browser | Owner offers or withdraws their timeline for the home page gallery |
+| `gallery_list()` | Browser | Up to 12 approved timelines for the home page |
+| `send_feedback(message, email?, page, lang)` | Browser | Saves a message from the feedback box; 60 an hour site-wide |
+| `hit(event, page, region, lang)` | Browser | Adds 1 to a daily counter. Unknown values are ignored |
+| `admin_inbox(key)` / `admin_gallery(key, id, show)` / `admin_feedback_delete(key, id)` | Admin page | Gallery requests, approving or removing, and feedback |
+| `admin_stats(key)` | Admin page | The last 14 days of visitors, saves, buy taps and payments, plus all-time totals |
 | `backup_export(key)` | Weekly backup job | Every timeline, guestbook message, order, reminder and photo path, for the encrypted weekly backup. Needs the backup key, stored only as a hash |
 | `admin_orders(key)` / `admin_review(key, order, ok)` | Admin page | Lists payments to check, and confirms or rejects one. Need the admin key, stored only as a hash |
 
@@ -55,6 +61,8 @@ Run in order from `supabase/migrations/`:
 9. `20261121023121_order_emails_plain.sql`: order emails without the reminder footer
 10. `20261121024226_manual_payment_wallet.sql`: which QR code (GCash, Maya or GoTyme) a payment went to
 11. `20261121024916_backup_export.sql`: the export the weekly backup uses
+12. `20261121030528_gallery_and_feedback.sql`: the home page gallery (owner offers, owner of the site approves) and the feedback box
+13. `20261125034136_visitor_counts.sql`: daily visitor counts, with nothing that identifies a visitor
 
 After running them, set the admin key: see [operations](operations.md#take-qr-code-payments-by-hand).
 

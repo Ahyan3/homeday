@@ -64,6 +64,15 @@ Change all three, then deploy:
 - `public/assets/core.js`, `H.PRICES`: what visitors see, in pesos and in dollars
 - The fallback text in `public/index.html` and `public/keepsake.html`, shown for a moment before the scripts load
 
+## The admin page
+
+Open `/admin` on your phone (paste the admin key once). From top to bottom:
+
+- **Payments to check:** confirm or reject QR code payments (see below).
+- **Gallery requests:** owners who offered their timeline for the home page. Open each one and check its photos are fine for anyone to see, then **Approve** or **Decline** (two taps). **On the home page now** lists what's showing, with **Remove**. The home page shows the 12 most recently approved.
+- **Visitors, last 14 days:** visitors (one per browser per day), how many were abroad or used Taglish, timelines saved, buy taps and paid keepsakes. Counts are daily totals only: no cookies, no IP addresses, and browsers set to Do Not Track aren't counted.
+- **Feedback:** messages from the "Send feedback" box in the footer, with the sender's email if they gave one.
+
 ## Weekly backup
 
 Supabase's free plan keeps no backups, so the **Weekly backup** job in `.github/workflows/backup.yml` does it. Every Sunday at 10:17 am Philippine time it copies every timeline, guestbook message, order and reminder, plus every photo, encrypts them and keeps the file for 90 days. Website secrets and the song chart aren't included: the secrets live in your password manager, and the chart comes from `supabase/seed/`.

@@ -60,6 +60,14 @@
 
 <footer class="noprint">
   <div class="wrap small">
+    <div class="fb">
+      <button type="button" class="linklike" id="fb-open" data-t>Send feedback</button>
+      <form class="fb-form" id="fb-form" hidden novalidate>
+        <div class="f"><label for="fb-msg" data-t>What should we fix or add?</label><textarea id="fb-msg" rows="3" maxlength="1000"></textarea></div>
+        <div class="f"><label for="fb-email"><span data-t>Your email</span> <span class="opt" data-t>(only if you'd like a reply)</span></label><input type="email" id="fb-email" autocomplete="email" maxlength="254"></div>
+        <div class="actions"><button class="btn quiet" type="submit" data-t>Send</button><span class="small" id="fb-note" role="status"></span></div>
+      </form>
+    </div>
     <nav class="foot-links" aria-label="Help and policies"><a href="/help">Help</a><a href="/terms">Terms</a><a href="/privacy">Privacy</a><a href="/refunds">Refunds</a><a href="/security">Security</a></nav>
     <span>Homeday is run by Ryan Francis Romano in the Philippines. <a href="mailto:ahyanromano02@gmail.com">ahyanromano02@gmail.com</a></span>
   </div>
@@ -68,5 +76,6 @@
 <script src="/assets/core.js"></script>
 <script src="/assets/manual.js"></script>
 <script src="/assets/keepsake.js"></script>
+<script src="/assets/feedback.js"></script>
 </body>
 </html>

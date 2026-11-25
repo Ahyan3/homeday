@@ -19,7 +19,7 @@
 
   H.openManual = function (id, item, box) {
     var amount = H.price(item, "PHP");
-    box.innerHTML = ""; box.hidden = false; box.className = "manualpay";
+    box.innerHTML = ""; box.hidden = false; box.className = "manualpay"; H.hit("pay_open");
     var h = el("h3", { tabindex: "-1" }, H.t("Pay {price} by QR code", { price: amount }));
     var wallets = H.MANUAL_PAY.wallets, chosen = wallets[0];
     var pick = el("div", { "class": "mp-pick", role: "group", "aria-label": H.t("Which QR code are you paying?") });

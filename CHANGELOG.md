@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.6.0: 25 November 2026
+
+### Added
+- Gallery of real timelines on the home page. Owners offer theirs from Share; nothing shows until it's approved on `/admin`, and owners can take it down any time.
+- Visitor numbers on `/admin`: the last 14 days of visitors, people abroad, Taglish use, timelines saved, buy taps and payments. Daily totals only, with no cookies or IP addresses; Do Not Track is respected and `/admin` isn't counted.
+- "Send feedback" box in the footer of the home and keepsake pages; messages appear on `/admin`.
+
+### Changed
+- Privacy, help and security pages describe the gallery and how visits are counted.
+- The admin page copes with an empty gallery or stats answer instead of stopping.
+
 ## 1.5.0: 21 November 2026
 
 ### Added

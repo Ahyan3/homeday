@@ -31,7 +31,7 @@
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { note.textContent = H.t("Enter an email address, like you@example.com."); $("remind-email").focus(); return; }
     btn.disabled = true; note.textContent = H.t("Saving…");
     H.rpc("add_reminder", { p_id: id, p_key: key(), p_email: email }).then(function (res) {
-      btn.disabled = false; $("remind-email").value = "";
+      btn.disabled = false; $("remind-email").value = ""; H.hit("remind_on");
       var next = res && res.next ? fmt.format(H.parse(res.next)) : null;
       note.textContent = H.t(next ? "Done. We'll email {email} a week before {date}." : "Done. We'll email {email} a week before each homeday.", { email: email, date: next });
     }).catch(function (e) {

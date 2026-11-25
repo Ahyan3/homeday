@@ -40,6 +40,72 @@
     }
     return item;
   }
+  /* a button that needs two taps, so nothing happens by accident */
+  function twoTap(label, armedLabel, cls, act) {
+    var b = document.createElement("button"), armed = false;
+    b.type = "button"; b.className = cls; b.textContent = label;
+    b.addEventListener("click", function () {
+      if (!armed) { armed = true; b.textContent = armedLabel; setTimeout(function () { armed = false; b.textContent = label; }, 4000); return; }
+      b.disabled = true; act().then(load, function () { b.disabled = false; $("adm-lead").textContent = "That didn't save. Check your connection and try again."; });
+    });
+    return b;
+  }
+  function text(tag, cls, t) { var e = document.createElement(tag); if (cls) e.className = cls; e.textContent = t; return e; }
+  function link(href, t) { var a = document.createElement("a"); a.href = href; a.target = "_blank"; a.rel = "noopener"; a.textContent = t; return a; }
+  function inbox(r) {
+    if (!r || !r.gallery_pending) return;
+    var gp = $("adm-gal-pending"), gs = $("adm-gal-shown"), fb = $("adm-feedback");
+    gp.innerHTML = ""; gs.innerHTML = ""; fb.innerHTML = "";
+    r.gallery_pending.forEach(function (g) {
+      var li = document.createElement("li"); li.className = "adm-item adm-gal";
+      if (g.photo) { var img = document.createElement("img"); img.src = H.photoUrl(g.photo); img.alt = ""; img.className = "adm-thumb"; li.appendChild(img); }
+      var who = document.createElement("div"); who.className = "adm-who";
+      who.appendChild(text("b", "nm", g.name + (g.memorial ? " (memorial)" : "")));
+      var meta = text("span", "small", (g.photo_count || 0) + " photos · offered " + when(g.gallery_at) + " · "); meta.appendChild(link("/t/" + g.id, "open timeline")); who.appendChild(meta);
+      li.appendChild(who);
+      var acts = document.createElement("div"); acts.className = "actions";
+      acts.appendChild(twoTap("Approve", "Tap again to show it", "btn", function () { return H.rpc("admin_gallery", { p_key: key, p_id: g.id, p_show: true }); }));
+      acts.appendChild(twoTap("Decline", "Tap again to decline", "btn quiet", function () { return H.rpc("admin_gallery", { p_key: key, p_id: g.id, p_show: false }); }));
+      li.appendChild(acts); gp.appendChild(li);
+    });
+    if (!r.gallery_pending.length) gp.appendChild(text("li", "small", "No requests."));
+    r.gallery_shown.forEach(function (g) {
+      var li = document.createElement("li"); li.className = "adm-item paid";
+      var who = document.createElement("div"); who.className = "adm-who";
+      var nm = text("b", "nm", g.name + " "); who.appendChild(nm);
+      var meta = text("span", "small", "approved " + when(g.gallery_at) + " · "); meta.appendChild(link("/t/" + g.id, "open")); who.appendChild(meta);
+      li.appendChild(who);
+      var acts = document.createElement("div"); acts.className = "actions";
+      acts.appendChild(twoTap("Remove from home page", "Tap again to remove", "btn quiet", function () { return H.rpc("admin_gallery", { p_key: key, p_id: g.id, p_show: false }); }));
+      li.appendChild(acts); gs.appendChild(li);
+    });
+    if (!r.gallery_shown.length) gs.appendChild(text("li", "small", "Nothing yet."));
+    r.feedback.forEach(function (f) {
+      var li = document.createElement("li"); li.className = "adm-item paid";
+      li.appendChild(text("p", "adm-msg", f.message));
+      var meta = text("span", "small", when(f.created_at) + (f.lang === "tl" ? " · Taglish" : "") + (f.page ? " · on " + f.page : "") + (f.email ? " · " : ""));
+      if (f.email) { var a = document.createElement("a"); a.href = "mailto:" + f.email; a.textContent = f.email; meta.appendChild(a); }
+      li.appendChild(meta);
+      var acts = document.createElement("div"); acts.className = "actions";
+      acts.appendChild(twoTap("Delete", "Tap again to delete", "btn quiet", function () { return H.rpc("admin_feedback_delete", { p_key: key, p_id: f.id }); }));
+      li.appendChild(acts); fb.appendChild(li);
+    });
+    if (!r.feedback.length) fb.appendChild(text("li", "small", "No feedback yet."));
+  }
+  function stats(r) {
+    if (!r || !r.days) return;
+    var peso = function (c) { return "₱" + H.num(Math.round(c / 100)); };
+    var a = r.all_time;
+    $("adm-alltime").textContent = "All time: " + H.num(a.timelines) + " timelines, " + H.num(a.paid) + " paid keepsakes (" + peso(a.paid_php_centavos) + "), " + H.num(a.reminders) + " reminder sign-ups, " + H.num(a.gallery) + " in the gallery.";
+    var max = Math.max.apply(null, r.days.map(function (d) { return d.visitors; }).concat([1]));
+    var fmt = new Intl.DateTimeFormat("en-GB", { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" });
+    var head = "<thead><tr><th scope=\"col\">Day</th><th scope=\"col\">Visitors</th><th scope=\"col\">Abroad</th><th scope=\"col\">Taglish</th><th scope=\"col\">Saved</th><th scope=\"col\">Buy taps</th><th scope=\"col\">Paid</th></tr></thead>";
+    var body = r.days.map(function (d) {
+      var w = Math.round(d.visitors / max * 100);
+      return "<tr><th scope=\"row\">" + fmt.format(H.parse(d.day)) + "</th><td class=\"bar\"><span style=\"--w:" + w + "%\"></span><b>" + H.num(d.visitors) + "</b></td><td>" + H.num(d.abroad) + "</td><td>" + H.num(d.taglish) + "</td><td>" + H.num(d.saved) + "</td><td>" + H.num(d.buy_clicks) + "</td><td>" + (d.paid ? H.num(d.paid) + " · " + peso(d.paid_php_centavos) : "0") + "</td></tr>";
+    }).join("");
+    $("adm-stats").innerHTML = head + "<tbody>" + body + "</tbody>";
+  }
   function load() {
     $("adm-lead").textContent = "Loading…";
     return H.rpc("admin_orders", { p_key: key }).then(function (r) {
@@ -52,6 +118,7 @@
         ? r.pending.length + (r.pending.length === 1 ? " payment" : " payments") + " to check. Open the app it was paid to, find the reference number in your transactions, and check the amount is ₱699."
         : "Nothing to check. New payments appear here.";
       if (!r.recent.length) d.innerHTML = '<li class="small">None yet.</li>';
+      return Promise.all([H.rpc("admin_inbox", { p_key: key }).then(inbox), H.rpc("admin_stats", { p_key: key }).then(stats)]);
     });
   }
   $("adm-login").addEventListener("submit", function (ev) {

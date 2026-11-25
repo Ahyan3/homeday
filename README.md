@@ -18,6 +18,9 @@ Live: [homeday-eight.vercel.app](https://homeday-eight.vercel.app) · Moving to 
 - **Pay by QR code.** Before PayMongo is live, buyers pay your GCash, Maya or GoTyme QR code and send the reference number; you confirm it on `/admin` and the keepsake unlocks. Switches to PayMongo by itself once its key is set.
 - **Weekly encrypted backup.** A GitHub job copies the database and every photo each Sunday, encrypts them and keeps them for 90 days; `scripts/backup-to-sql.mjs` turns a backup back into the database.
 - **English or Taglish.** A switch in the header swaps the whole site (timeline, sharing, guestbook, payments, reminders) into everyday Taglish; browsers set to Filipino start in Taglish. Policy pages and the printed keepsake stay in English.
+- **Gallery of real timelines.** Owners can offer their timeline for the home page; it shows after the site owner approves it on `/admin`, and comes down any time.
+- **Visitor numbers without tracking.** Daily totals only (visitors, saves, buy taps, payments), shown on `/admin`. No cookies, no IP addresses, Do Not Track respected.
+- **Feedback box** in the footer, read on `/admin`.
 - **Works for visitors abroad.** Visitors outside the Philippines see prices in US dollars and can switch; US visitors also get Fahrenheit and US-style dates. Dollar charging switches on with one setting once PayMongo enables it.
 - **Help and policies.** Help, terms, privacy (Philippine Data Privacy Act), refunds and security pages, plus `security.txt`.
 - **Security.** Strict content security policy and security headers on both hosts, fonts served from the site, no third-party scripts.
@@ -52,6 +55,8 @@ public/               Website: pages, styles, browser scripts, share image
   assets/remind.js    Reminder sign-up for timeline owners
   assets/prices.js    Prices in the visitor's currency, and the currency switch
   assets/tl.js        Taglish text, keyed by the English it replaces
+  assets/gallery.js   Gallery switch for owners and the home page row
+  assets/feedback.js  The footer feedback box
   assets/manual.js    Payment by QR code (GCash, Maya, GoTyme)
   admin.html          Owner page for confirming QR code payments
   assets/fonts/       Self-hosted fonts (SIL Open Font License)
